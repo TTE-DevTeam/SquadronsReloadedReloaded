@@ -32,12 +32,12 @@ public class SquadronManager {
 	public void removeSquadron(Player p) {
 		Squadron sq = squads.remove(p);
 		if (sq != null && sq.getCarrier() != null) {
-			sq.getCarrier().getDataTag(SquadronsReloaded.SQUADRONS).remove(sq);
+			sq.getCarrier().getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).remove(sq);
 		}
 	}
 	public void removeSquadron(Squadron sq) {
 		if (sq != null && sq.getCarrier() != null) {
-			sq.getCarrier().getDataTag(SquadronsReloaded.SQUADRONS).remove(sq);
+			sq.getCarrier().getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).remove(sq);
 		}
 		squads.entrySet().removeIf(entry -> entry.getValue().equals(sq));
 	}
@@ -70,7 +70,7 @@ public class SquadronManager {
 	}
 	
 	public List<Squadron> getCarrierSquadrons(PlayerCraft c) {
-		return c.getDataTag(SquadronsReloaded.SQUADRONS);
+		return c.getDataTag(SquadronsReloaded.CARRIER_SQUADRONS);
 	}
 
 	public List<Squadron> getSquadronList() {
