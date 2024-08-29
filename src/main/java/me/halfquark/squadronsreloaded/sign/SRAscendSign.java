@@ -1,56 +1,51 @@
 package me.halfquark.squadronsreloaded.sign;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
-import me.halfquark.squadronsreloaded.squadron.SquadronManager;
 import net.countercraft.movecraft.CruiseDirection;
+import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.sign.AbstractSignListener;
+import net.countercraft.movecraft.sign.AscendSign;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 
-public class SRAscendSign implements Listener {
+public class SRAscendSign extends AscendSign {
 
-	@EventHandler
-    public void onSignClickEvent(PlayerInteractEvent event){
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
+    @Override
+    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+        if (!super.canPlayerUseSignOn(player, craft)) {
+            return false;
         }
-        Block block = event.getClickedBlock();
-        if (!Tag.SIGNS.isTagged(block.getType())){
-            return;
+        if (craft instanceof SquadronCraft sc) {
+            return sc.getSquadron().getPilot() == player;
         }
-        Player player = event.getPlayer();
-        Sign sign = (Sign) event.getClickedBlock().getState();
-        String line = ChatColor.stripColor(sign.getLine(0));
-        if(!line.equalsIgnoreCase("Ascend: OFF") && !line.equalsIgnoreCase("Ascend: ON"))
-        	return;
-        boolean setAscend = line.equalsIgnoreCase("Ascend: OFF");
-        String setLine = (setAscend)?("Ascend: ON"):("Ascend: OFF");
-        Squadron sq = SquadronManager.getInstance().getPlayerSquadron(player, true);
-		if(sq == null)
-			return;
-		if(setAscend) {
-			sq.setCruiseDirection(CruiseDirection.UP);
-		}
-		sq.setCruising(setAscend);
-		for(SquadronCraft c : sq.getCrafts()) {
-			if(setAscend) {
-	            c.setLastCruiseUpdate(System.currentTimeMillis());
-			}
-	        sign.setLine(0, setLine);
-	        sign.update(true);
-
-	        c.resetSigns(sign);
-		}
-
+        return true;
     }
-	
+
+    @Override
+    protected void setCraftCruising(Player player, CruiseDirection direction, Craft craft) {
+        if (craft instanceof SquadronCraft sc) {
+            Squadron squadron = sc.getSquadron();
+            squadron.setCruiseDirection(direction);
+            squadron.setCruising(true);
+
+            for (SquadronCraft c : squadron.getCrafts()) {
+                c.setLastCruiseUpdate(System.currentTimeMillis());
+            }
+        }
+        else {
+            super.setCraftCruising(player, direction, craft);
+        }
+    }
+
+    @Override
+    protected void onAfterStoppingCruise(Craft craft, AbstractSignListener.SignWrapper signWrapper, Player player) {
+        super.onAfterStoppingCruise(craft, signWrapper, player);
+
+        if (craft instanceof SquadronCraft sc) {
+            Squadron sq = sc.getSquadron();
+            sq.setCruising(false);
+        }
+    }
 }

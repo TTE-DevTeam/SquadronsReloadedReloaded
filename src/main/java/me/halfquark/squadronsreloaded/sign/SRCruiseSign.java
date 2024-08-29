@@ -1,81 +1,71 @@
 package me.halfquark.squadronsreloaded.sign;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.type.WallSign;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import me.halfquark.squadronsreloaded.SquadronsReloaded;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
-import me.halfquark.squadronsreloaded.squadron.SquadronManager;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.sign.AbstractSignListener;
+import net.countercraft.movecraft.sign.CruiseSign;
 import net.countercraft.movecraft.util.MathUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.jetbrains.annotations.Nullable;
 
-public class SRCruiseSign implements Listener {
+public class SRCruiseSign extends CruiseSign {
 
-	@EventHandler(priority = EventPriority.LOWEST)
-    public final void onSignClick(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
+    @Override
+    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+        if (!super.canPlayerUseSignOn(player, craft)) {
+            return false;
         }
-        Block block = event.getClickedBlock();
-        if (!Tag.SIGNS.isTagged(block.getType())){
-            return;
+        if (craft instanceof SquadronCraft sc) {
+            return sc.getSquadron().getPilot() == player;
         }
-        Player player = event.getPlayer();
-        Sign sign = (Sign) event.getClickedBlock().getState();
-        String line = ChatColor.stripColor(sign.getLine(0));
-        if(!line.equalsIgnoreCase("Cruise: OFF") && !line.equalsIgnoreCase("Cruise: ON"))
-        	return;
-        boolean setCruise = line.equalsIgnoreCase("Cruise: OFF");
-        String setLine = (setCruise)?("Cruise: ON"):("Cruise: OFF");
-        Squadron sq = SquadronManager.getInstance().getPlayerSquadron(player, true);
-		if(sq == null)
-			return;
-		boolean onBoardCraft = false;
-	    for(Craft craft : sq.getCrafts()) {
-	    	if (MathUtils.locationNearHitBox(craft.getHitBox(),event.getPlayer().getLocation(),2)) {
-	    		onBoardCraft = true;
-		        break;
-		    }
-	    }
-	    if(!onBoardCraft)
-	    	return;
-	    sign.setLine(0, "");
-	    sign.update(true);
-	    sign.setLine(0, setLine);
-		CruiseDirection cd = null;
-		if(setCruise) {
-			if(sign.getBlockData() instanceof WallSign) {
-                cd = CruiseDirection.fromBlockFace(((WallSign) sign.getBlockData()).getFacing());
-            } else {
-                cd = CruiseDirection.NONE;
-            }
-		}
-		if(setCruise) {
-			sq.setCruiseDirection(cd);
-			for(SquadronCraft c : sq.getCrafts())
-				c.setLastCruiseUpdate(System.currentTimeMillis());
-		}
-        sq.setCruising(setCruise);
-        for(SquadronCraft c : sq.getCrafts())
-        	c.resetSigns(sign);
-		new BukkitRunnable() {
-            @Override
-            public void run() {
-                sign.update(true);
-            }
-        }.runTaskLater(SquadronsReloaded.getInstance(), 1);
+        return true;
     }
-	
+
+    @Override
+    protected boolean internalProcessSignWithCraft(Action clickType, AbstractSignListener.SignWrapper sign, Craft craft, Player player) {
+        // Are we sure we want to keep that?
+        if (craft instanceof SquadronCraft sc) {
+            boolean onBoardCraft = false;
+            for(Craft scTmp : sc.getSquadron().getCrafts()) {
+                if (MathUtils.locationNearHitBox(craft.getHitBox(), player.getLocation(),2)) {
+                    onBoardCraft = true;
+                    break;
+                }
+            }
+            if(!onBoardCraft)
+                return false;
+        }
+
+
+        return super.internalProcessSignWithCraft(clickType, sign, craft, player);
+    }
+
+    @Override
+    protected void setCraftCruising(Player player, CruiseDirection direction, Craft craft) {
+        if (craft instanceof SquadronCraft sc) {
+            Squadron squadron = sc.getSquadron();
+            squadron.setCruiseDirection(direction);
+            squadron.setCruising(true);
+
+            for (SquadronCraft c : squadron.getCrafts()) {
+                c.setLastCruiseUpdate(System.currentTimeMillis());
+            }
+        }
+        else {
+            super.setCraftCruising(player, direction, craft);
+        }
+    }
+
+    @Override
+    protected void onAfterStoppingCruise(Craft craft, AbstractSignListener.SignWrapper signWrapper, Player player) {
+        super.onAfterStoppingCruise(craft, signWrapper, player);
+
+        if (craft instanceof SquadronCraft sc) {
+            Squadron sq = sc.getSquadron();
+            sq.setCruising(false);
+        }
+    }
 }
