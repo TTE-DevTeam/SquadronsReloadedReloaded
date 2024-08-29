@@ -26,6 +26,8 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.MathUtils;
 
+// TODO: What is the point of this?!
+// All other sign implementations call the other squadron crafts recursively anyway
 public class SRSyncedSign implements Listener {
 	
 	private static ConcurrentMap<Player, Boolean> signCooldown = new ConcurrentHashMap<>();
