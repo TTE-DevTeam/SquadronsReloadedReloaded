@@ -9,21 +9,33 @@ import me.halfquark.squadronsreloaded.move.CraftRotateManager;
 import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
 import me.halfquark.squadronsreloaded.sign.*;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
+import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
+import net.countercraft.movecraft.sign.AbstractMovecraftSign;
+import net.countercraft.movecraft.sign.HelmSign;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.xml.stream.events.Namespace;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SquadronsReloaded extends JavaPlugin {
 
-	public static final CraftDataTagKey<List<Squadron>> SQUADRONS = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("squadronsreloadedreloaded", "squadrons"), craft -> new ArrayList<>());
+	public static final CraftDataTagKey<List<Squadron>> CARRIER_SQUADRONS = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("squadronsreloadedreloaded", "carriersquadrons"), craft -> new ArrayList<>());
+	public static final CraftDataTagKey<Squadron> SQUADRON = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("squadronsreloadedreloaded", "squadron"), craft -> {
+		if (craft instanceof SquadronCraft sc) {
+			return sc.getSquadron();
+		}
+		if (craft instanceof PilotedCraft pc) {
+			return new Squadron(pc.getPilot());
+		}
+		throw new IllegalStateException("Impossible state!");
+	});
 	
 	private static SquadronsReloaded inst;
 	private SquadronCommand sc;
@@ -82,10 +94,15 @@ public class SquadronsReloaded extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new SRSignLeftClickListener(), this);
 		getServer().getPluginManager().registerEvents(new SRInteractListener(), this);
 		getServer().getPluginManager().registerEvents(new SRPlayerListener(), this);
-		getServer().getPluginManager().registerEvents(new SRCruiseSign(), this);
-		getServer().getPluginManager().registerEvents(new SRHelmSign(), this);
-		getServer().getPluginManager().registerEvents(new SRAscendSign(), this);
-		getServer().getPluginManager().registerEvents(new SRDescendSign(), this);
+		//getServer().getPluginManager().registerEvents(new SRCruiseSign(), this);
+		AbstractMovecraftSign.register("Cruise:", new SRCruiseSign());
+		//getServer().getPluginManager().registerEvents(new SRHelmSign(), this);
+		AbstractMovecraftSign.register(HelmSign.PRETTY_HEADER, new SRHelmSign());
+		AbstractMovecraftSign.register("[Helm]", new SRHelmSign());
+		//getServer().getPluginManager().registerEvents(new SRAscendSign(), this);
+		AbstractMovecraftSign.register("Ascend:", new SRAscendSign());
+		//getServer().getPluginManager().registerEvents(new SRDescendSign(), this);
+		AbstractMovecraftSign.register("Descend:", new SRDescendSign());
 		getServer().getPluginManager().registerEvents(new SRLeadSign(), this);
 		getServer().getPluginManager().registerEvents(new SRReleaseSign(), this);
 		getServer().getPluginManager().registerEvents(new SRFormationSign(), this);
