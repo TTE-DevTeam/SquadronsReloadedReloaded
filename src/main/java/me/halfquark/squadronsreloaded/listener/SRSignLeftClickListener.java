@@ -1,22 +1,5 @@
 package me.halfquark.squadronsreloaded.listener;
 
-import net.countercraft.movecraft.Movecraft;
-import net.countercraft.movecraft.craft.PlayerCraftImpl;
-import net.countercraft.movecraft.events.CraftReleaseEvent;
-import net.countercraft.movecraft.processing.functions.Result;
-import net.countercraft.movecraft.util.Pair;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-
 import me.halfquark.squadronsreloaded.SquadronsReloaded;
 import me.halfquark.squadronsreloaded.move.CraftDirectionDetection;
 import me.halfquark.squadronsreloaded.move.CraftRotateManager;
@@ -27,13 +10,25 @@ import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.PlayerCraft;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent.Reason;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.processing.functions.Result;
 import net.countercraft.movecraft.util.ChatUtils;
 import net.countercraft.movecraft.util.MathUtils;
+import net.countercraft.movecraft.util.Pair;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class SRSignLeftClickListener implements Listener {
 
@@ -95,6 +90,7 @@ public class SRSignLeftClickListener implements Listener {
         if(SquadronManager.getInstance().getPlayerSquadron(player, false) == null) {
         	squadron = new Squadron(player);
         	squadron.setCarrier(pilotedCraft);
+            pilotedCraft.getDataTag(SquadronsReloaded.SQUADRONS).add(squadron);
         	SquadronManager.getInstance().putSquadron(player, squadron);
         } else {
         	squadron = SquadronManager.getInstance().getPlayerSquadron(player, false);
@@ -129,7 +125,7 @@ public class SRSignLeftClickListener implements Listener {
                     return new Pair<>(Result.succeed(), c);
                 },
                 player.getWorld(), player,
-                Movecraft.getAdventure().player(player),
+                player,
                 craft -> () -> {
                     // Release old craft if it exists
                 }

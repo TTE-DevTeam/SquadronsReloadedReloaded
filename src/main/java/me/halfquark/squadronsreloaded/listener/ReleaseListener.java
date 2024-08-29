@@ -39,19 +39,20 @@ public class ReleaseListener implements Listener {
 		if(!(e.getCraft() instanceof SquadronCraft))
 			return;
 		SquadronCraft craft = (SquadronCraft) e.getCraft();
-		Player p = craft.getSquadronPilot();
-		if(p == null)
-			return;
 		Squadron sq = craft.getSquadron();
 		if(sq == null)
 			return;
 		if(sq.getCarrier() != null) {
-			if(sq.getCarrier().equals(e.getCraft())) {
+			// Impossible condition => Carrier is a playercraft, and SquadronCraft never extends PlayerCraft
+			/*if(sq.getCarrier().equals(e.getCraft())) {
 				SquadronManager.getInstance().getPlayerSquadron(p, false).releaseAll(e.getReason());
 				SquadronManager.getInstance().removeSquadron(p);
 				return;
-			}
+			}*/
 		}
+		Player p = craft.getSquadronPilot();
+		if(p == null)
+			return;
 		if(sq.hasCraft(e.getCraft())) {
 			boolean tpToLead = false;
 			if(sq.getLeadCraft().equals(e.getCraft())) {
