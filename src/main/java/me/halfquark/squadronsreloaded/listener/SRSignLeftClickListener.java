@@ -90,7 +90,7 @@ public class SRSignLeftClickListener implements Listener {
         if(SquadronManager.getInstance().getPlayerSquadron(player, false) == null) {
         	squadron = new Squadron(player);
         	squadron.setCarrier(pilotedCraft);
-            pilotedCraft.getDataTag(SquadronsReloaded.SQUADRONS).add(squadron);
+            pilotedCraft.getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).add(squadron);
         	SquadronManager.getInstance().putSquadron(player, squadron);
         } else {
         	squadron = SquadronManager.getInstance().getPlayerSquadron(player, false);
