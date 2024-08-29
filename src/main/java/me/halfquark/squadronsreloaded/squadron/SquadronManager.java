@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nullable;
 
+import me.halfquark.squadronsreloaded.SquadronsReloaded;
 import org.bukkit.entity.Player;
 
 import net.countercraft.movecraft.craft.PlayerCraft;
@@ -28,8 +29,16 @@ public class SquadronManager {
 	public static SquadronManager getInstance() {return inst;}
 	
 	public void putSquadron(Player p, Squadron s) {squads.put(p, s);}
-	public void removeSquadron(Player p) {squads.remove(p);}
+	public void removeSquadron(Player p) {
+		Squadron sq = squads.remove(p);
+		if (sq != null && sq.getCarrier() != null) {
+			sq.getCarrier().getDataTag(SquadronsReloaded.SQUADRONS).remove(sq);
+		}
+	}
 	public void removeSquadron(Squadron sq) {
+		if (sq != null && sq.getCarrier() != null) {
+			sq.getCarrier().getDataTag(SquadronsReloaded.SQUADRONS).remove(sq);
+		}
 		squads.entrySet().removeIf(entry -> entry.getValue().equals(sq));
 	}
 	public boolean hasSquadron(Player p) {
@@ -61,13 +70,9 @@ public class SquadronManager {
 	}
 	
 	public List<Squadron> getCarrierSquadrons(PlayerCraft c) {
-		ArrayList<Squadron> squadList = new ArrayList<>();
-		for(Map.Entry<Player, Squadron> entry : squads.entrySet()) {
-			if(c.equals(entry.getValue().getCarrier()))
-				squadList.add(entry.getValue());
-		}
-		return squadList;
+		return c.getDataTag(SquadronsReloaded.SQUADRONS);
 	}
+
 	public List<Squadron> getSquadronList() {
 		ArrayList<Squadron> squadList = new ArrayList<>();
 		for(Map.Entry<Player, Squadron> entry : squads.entrySet()) {

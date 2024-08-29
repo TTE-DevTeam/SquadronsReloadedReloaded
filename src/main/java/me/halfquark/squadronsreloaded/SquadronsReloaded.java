@@ -1,38 +1,29 @@
 package me.halfquark.squadronsreloaded;
 
-import java.io.File;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.halfquark.squadronsreloaded.async.SRAsyncManager;
 import me.halfquark.squadronsreloaded.command.SquadronCommand;
 import me.halfquark.squadronsreloaded.formation.FormationManager;
-import me.halfquark.squadronsreloaded.listener.RedstoneComponentListener;
-import me.halfquark.squadronsreloaded.listener.ReleaseListener;
-import me.halfquark.squadronsreloaded.listener.RotationListener;
-import me.halfquark.squadronsreloaded.listener.SRInteractListener;
-import me.halfquark.squadronsreloaded.listener.SRPlayerListener;
-import me.halfquark.squadronsreloaded.listener.SRSignLeftClickListener;
-import me.halfquark.squadronsreloaded.listener.SinkListener;
-import me.halfquark.squadronsreloaded.listener.SwitchListener;
-import me.halfquark.squadronsreloaded.listener.TranslationListener;
+import me.halfquark.squadronsreloaded.listener.*;
 import me.halfquark.squadronsreloaded.move.CraftProximityManager;
 import me.halfquark.squadronsreloaded.move.CraftRotateManager;
 import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
-import me.halfquark.squadronsreloaded.sign.SRAscendSign;
-import me.halfquark.squadronsreloaded.sign.SRCruiseSign;
-import me.halfquark.squadronsreloaded.sign.SRDescendSign;
-import me.halfquark.squadronsreloaded.sign.SRFormationSign;
-import me.halfquark.squadronsreloaded.sign.SRHelmSign;
-import me.halfquark.squadronsreloaded.sign.SRLeadSign;
-import me.halfquark.squadronsreloaded.sign.SRReleaseSign;
-import me.halfquark.squadronsreloaded.sign.SRSyncedSign;
+import me.halfquark.squadronsreloaded.sign.*;
+import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.xml.stream.events.Namespace;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SquadronsReloaded extends JavaPlugin {
+
+	public static final CraftDataTagKey<List<Squadron>> SQUADRONS = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey("squadronsreloadedreloaded", "squadrons"), craft -> new ArrayList<>());
 	
 	private static SquadronsReloaded inst;
 	private SquadronCommand sc;
