@@ -97,20 +97,19 @@ public class SquadronsReloaded extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new SRInteractListener(), this);
 		getServer().getPluginManager().registerEvents(new SRPlayerListener(), this);
 		//getServer().getPluginManager().registerEvents(new SRCruiseSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("Cruise:", new SRCruiseSign("Cruise:"));
+		MovecraftSignRegistry.INSTANCE.register("Cruise:", new SRCruiseSign("Cruise:"), true);
 		//getServer().getPluginManager().registerEvents(new SRHelmSign(), this);
-		MovecraftSignRegistry.INSTANCE.register(HelmSign.PRETTY_HEADER, new SRHelmSign());
-		MovecraftSignRegistry.INSTANCE.register("[Helm]", new SRHelmSign());
+		MovecraftSignRegistry.INSTANCE.register("[Helm]", new SRHelmSign(), true, HelmSign.PRETTY_HEADER);
 		//getServer().getPluginManager().registerEvents(new SRAscendSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("Ascend:", new SRAscendSign("Ascend:"));
+		MovecraftSignRegistry.INSTANCE.register("Ascend:", new SRAscendSign("Ascend:"), true);
 		//getServer().getPluginManager().registerEvents(new SRDescendSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("Descend:", new SRDescendSign("Descend:"));
+		MovecraftSignRegistry.INSTANCE.register("Descend:", new SRDescendSign("Descend:"), true);
 		//getServer().getPluginManager().registerEvents(new SRLeadSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("SquadronLead", new SRLeadSign(), "SQLead");
+		MovecraftSignRegistry.INSTANCE.register("SquadronLead", new SRLeadSign(), true, "SQLead");
 		//getServer().getPluginManager().registerEvents(new SRReleaseSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("SquadronRelease", new SRReleaseSign(), "SRelease", "SQRelease");
+		MovecraftSignRegistry.INSTANCE.register("SquadronRelease", new SRReleaseSign(), true, "SRelease", "SQRelease");
 		//getServer().getPluginManager().registerEvents(new SRFormationSign(), this);
-		MovecraftSignRegistry.INSTANCE.register("Formation:", new SRFormationSign());
+		MovecraftSignRegistry.INSTANCE.register("Formation:", new SRFormationSign(), true);
 		//getServer().getPluginManager().registerEvents(new SRSyncedSign(), this);
 		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
 
