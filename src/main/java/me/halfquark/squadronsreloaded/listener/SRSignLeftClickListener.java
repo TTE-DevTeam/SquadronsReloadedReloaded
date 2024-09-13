@@ -30,6 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+//TODO: Re-Implement via subclass of CraftPilotSign
 public class SRSignLeftClickListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -117,6 +118,7 @@ public class SRSignLeftClickListener implements Listener {
         CraftManager.getInstance().detect(
                 startPoint,
                 type, (t, w, p, parents) -> {
+                    //TODO: By default, minecraft disables assert statements, they don't do anything here!
                     assert p != null; // Note: This only passes in a non-null player.
                     assert parents.size() > 0;
 
