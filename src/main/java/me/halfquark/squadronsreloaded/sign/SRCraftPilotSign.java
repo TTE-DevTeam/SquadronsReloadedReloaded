@@ -84,7 +84,6 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             CraftManager.getInstance().detect(
                     startPoint,
                     this.craftType, (t, w, p, parents) -> {
-                        //TODO: By default, minecraft disables assert statements, they don't do anything here!
                         if (p == null || parents.size() == 0) {
                             return new Pair<>(Result.fail(), null);
                         }
