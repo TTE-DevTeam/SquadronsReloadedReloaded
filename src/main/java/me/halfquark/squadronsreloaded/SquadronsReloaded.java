@@ -11,6 +11,7 @@ import me.halfquark.squadronsreloaded.sign.*;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
@@ -18,6 +19,7 @@ import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
 import net.countercraft.movecraft.sign.AbstractMovecraftSign;
 import net.countercraft.movecraft.sign.HelmSign;
 import net.countercraft.movecraft.sign.MovecraftSignRegistry;
+import net.countercraft.movecraft.sign.SubcraftRotateSign;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -111,6 +113,9 @@ public class SquadronsReloaded extends JavaPlugin {
 		//getServer().getPluginManager().registerEvents(new SRFormationSign(), this);
 		MovecraftSignRegistry.INSTANCE.register("Formation:", new SRFormationSign(), true);
 		//getServer().getPluginManager().registerEvents(new SRSyncedSign(), this);
+		MovecraftSignRegistry.INSTANCE.register("Remote Sign", new SRRemoteSign(), true, "Remote");
+		// TODO: Suppress the subcraft rotate sign from rotating to other squadron members when called by a remote!
+		// MovecraftSignRegistry.INSTANCE.register("Subcraft Rotate", new SRSubcraftRotateSign(CraftManager.getInstance()::getCraftTypeFromString, Movecraft::getInstance)), true);
 		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
 
 		getServer().getPluginManager().registerEvents(new ReleaseListener(), this);
