@@ -36,6 +36,8 @@ public class RotationListener implements Listener {
 	}
 	
 	private boolean isHorizontal(CruiseDirection cd) {
+		if (cd == null)
+			return false;
 		return cd.equals(CruiseDirection.EAST)
 			|| cd.equals(CruiseDirection.WEST)
 			|| cd.equals(CruiseDirection.NORTH)
