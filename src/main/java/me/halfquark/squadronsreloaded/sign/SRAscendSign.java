@@ -4,23 +4,21 @@ import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.sign.AbstractSignListener;
 import net.countercraft.movecraft.sign.AscendSign;
+import net.countercraft.movecraft.sign.SignListener;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 
-public class SRAscendSign extends AscendSign {
+public class SRAscendSign extends AscendSign implements ISquadronSign {
+
+    public SRAscendSign(String ident) {
+        super(ident);
+    }
 
     @Override
     protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
-        if (!super.canPlayerUseSignOn(player, craft)) {
-            return false;
-        }
-        if (craft instanceof SquadronCraft sc) {
-            return sc.getSquadron().getPilot() == player;
-        }
-        return true;
+        return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
     }
 
     @Override
@@ -40,7 +38,7 @@ public class SRAscendSign extends AscendSign {
     }
 
     @Override
-    protected void onAfterStoppingCruise(Craft craft, AbstractSignListener.SignWrapper signWrapper, Player player) {
+    protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Player player) {
         super.onAfterStoppingCruise(craft, signWrapper, player);
 
         if (craft instanceof SquadronCraft sc) {

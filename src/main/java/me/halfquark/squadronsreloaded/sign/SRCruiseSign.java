@@ -4,28 +4,26 @@ import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.sign.AbstractSignListener;
 import net.countercraft.movecraft.sign.CruiseSign;
+import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
 
-public class SRCruiseSign extends CruiseSign {
+public class SRCruiseSign extends CruiseSign implements ISquadronSign {
 
-    @Override
-    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
-        if (!super.canPlayerUseSignOn(player, craft)) {
-            return false;
-        }
-        if (craft instanceof SquadronCraft sc) {
-            return sc.getSquadron().getPilot() == player;
-        }
-        return true;
+    public SRCruiseSign(String ident) {
+        super(ident);
     }
 
     @Override
-    protected boolean internalProcessSignWithCraft(Action clickType, AbstractSignListener.SignWrapper sign, Craft craft, Player player) {
+    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+        return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
+    }
+
+    @Override
+    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
         // Are we sure we want to keep that?
         if (craft instanceof SquadronCraft sc) {
             boolean onBoardCraft = false;
@@ -60,7 +58,7 @@ public class SRCruiseSign extends CruiseSign {
     }
 
     @Override
-    protected void onAfterStoppingCruise(Craft craft, AbstractSignListener.SignWrapper signWrapper, Player player) {
+    protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Player player) {
         super.onAfterStoppingCruise(craft, signWrapper, player);
 
         if (craft instanceof SquadronCraft sc) {

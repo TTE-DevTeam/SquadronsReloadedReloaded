@@ -26,7 +26,7 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.MathUtils;
 
-// TODO: What is the point of this?!
+// TODO: What is the point of this?! => For remote signs and stuff, doesn't work though. Remove this and make own implementation for subcraft signs
 // All other sign implementations call the other squadron crafts recursively anyway
 public class SRSyncedSign implements Listener {
 	
