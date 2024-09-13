@@ -11,6 +11,7 @@ import me.halfquark.squadronsreloaded.sign.*;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
@@ -110,8 +111,9 @@ public class SquadronsReloaded extends JavaPlugin {
 		MovecraftSignRegistry.INSTANCE.register("SquadronRelease", new SRReleaseSign(), "SRelease", "SQRelease");
 		//getServer().getPluginManager().registerEvents(new SRFormationSign(), this);
 		MovecraftSignRegistry.INSTANCE.register("Formation:", new SRFormationSign());
-		getServer().getPluginManager().registerEvents(new SRSyncedSign(), this);
-		
+		//getServer().getPluginManager().registerEvents(new SRSyncedSign(), this);
+		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
+
 		getServer().getPluginManager().registerEvents(new ReleaseListener(), this);
 		getServer().getPluginManager().registerEvents(new SinkListener(), this);
 		getServer().getPluginManager().registerEvents(new SwitchListener(), this);
