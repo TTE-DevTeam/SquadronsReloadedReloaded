@@ -22,7 +22,7 @@ public class SRHelmSign extends HelmSign implements ISquadronSign {
 
 	@Override
 	protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
-		if (craft instanceof SquadronCraft sc) {
+		if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
 			MovecraftRotation rotation = MovecraftRotation.fromAction(clickType);
 
 			if (!MathUtils.locIsNearCraftFast(craft, MathUtils.bukkit2MovecraftLoc(player.getLocation()))) {

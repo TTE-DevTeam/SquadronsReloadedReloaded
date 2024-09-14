@@ -25,7 +25,7 @@ public class SRCruiseSign extends CruiseSign implements ISquadronSign {
     @Override
     protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
         // Are we sure we want to keep that?
-        if (craft instanceof SquadronCraft sc) {
+        if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             boolean onBoardCraft = false;
             for(Craft scTmp : sc.getSquadron().getCrafts()) {
                 if (MathUtils.locationNearHitBox(craft.getHitBox(), player.getLocation(),2)) {
@@ -43,7 +43,7 @@ public class SRCruiseSign extends CruiseSign implements ISquadronSign {
 
     @Override
     protected void setCraftCruising(Player player, CruiseDirection direction, Craft craft) {
-        if (craft instanceof SquadronCraft sc) {
+        if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron squadron = sc.getSquadron();
             squadron.setCruiseDirection(direction);
             squadron.setCruising(true);
@@ -61,7 +61,7 @@ public class SRCruiseSign extends CruiseSign implements ISquadronSign {
     protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Player player) {
         super.onAfterStoppingCruise(craft, signWrapper, player);
 
-        if (craft instanceof SquadronCraft sc) {
+        if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron sq = sc.getSquadron();
             sq.setCruising(false);
         }

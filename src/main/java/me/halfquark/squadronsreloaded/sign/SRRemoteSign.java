@@ -18,7 +18,7 @@ public class SRRemoteSign extends RemoteSign implements ISquadronSign {
 
     @Override
     protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
-        if (craft instanceof SquadronCraft sc) {
+        if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron squadron = sc.getSquadron();
             for (SquadronCraft c : squadron.getCrafts()) {
                 super.internalProcessSignWithCraft(clickType, sign, c, player);

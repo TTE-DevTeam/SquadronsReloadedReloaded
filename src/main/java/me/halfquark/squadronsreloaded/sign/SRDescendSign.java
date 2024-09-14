@@ -22,7 +22,7 @@ public class SRDescendSign extends DescendSign implements ISquadronSign {
 
 	@Override
 	protected void setCraftCruising(Player player, CruiseDirection direction, Craft craft) {
-		if (craft instanceof SquadronCraft sc) {
+		if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
 			Squadron squadron = sc.getSquadron();
 			squadron.setCruiseDirection(direction);
 			squadron.setCruising(true);
@@ -40,7 +40,7 @@ public class SRDescendSign extends DescendSign implements ISquadronSign {
 	protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Player player) {
 		super.onAfterStoppingCruise(craft, signWrapper, player);
 
-		if (craft instanceof SquadronCraft sc) {
+		if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
 			Squadron sq = sc.getSquadron();
 			sq.setCruising(false);
 		}
