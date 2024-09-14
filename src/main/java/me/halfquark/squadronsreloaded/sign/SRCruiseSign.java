@@ -35,6 +35,7 @@ public class SRCruiseSign extends CruiseSign implements ISquadronSign {
             }
             if(!onBoardCraft)
                 return false;
+            return true;
         }
 
 
