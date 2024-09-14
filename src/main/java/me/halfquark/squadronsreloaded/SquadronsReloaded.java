@@ -11,15 +11,12 @@ import me.halfquark.squadronsreloaded.sign.*;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
-import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
-import net.countercraft.movecraft.sign.AbstractMovecraftSign;
 import net.countercraft.movecraft.sign.HelmSign;
 import net.countercraft.movecraft.sign.MovecraftSignRegistry;
-import net.countercraft.movecraft.sign.SubcraftRotateSign;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +56,7 @@ public class SquadronsReloaded extends JavaPlugin {
 	public static double SQUADMAXDISPCARRIERMULT;
 	public static double FORMATIONROUNDDISTANCE;
 	public static double FORMATIONSPEEDMULTIPLIER;
+	public static double CARRIER_RETURN_MINIMAL_MAX_DISTANCE;
 	public static Material SQUADRONPILOTTOOL;
 	public static boolean BLOCKCOUNTOVERRIDE;
 
@@ -84,6 +82,7 @@ public class SquadronsReloaded extends JavaPlugin {
 		SYNCEDSIGNS = getConfig().getStringList("syncedSigns");
 		FORMATIONSPEEDMULTIPLIER = getConfig().getDouble("formationSpeedMultiplier");
 		SQUADRONPILOTTOOL = Material.getMaterial(getConfig().getString("squadronPilotTool"));
+		CARRIER_RETURN_MINIMAL_MAX_DISTANCE = getConfig().getDouble("carrierReturnMinimalMaxDistance", 640);
 		BLOCKCOUNTOVERRIDE = getConfig().getBoolean("blockCountOverride");
 
 		loadResources();
@@ -117,6 +116,8 @@ public class SquadronsReloaded extends JavaPlugin {
 		// TODO: Suppress the subcraft rotate sign from rotating to other squadron members when called by a remote!
 		// MovecraftSignRegistry.INSTANCE.register("Subcraft Rotate", new SRSubcraftRotateSign(CraftManager.getInstance()::getCraftTypeFromString, Movecraft::getInstance)), true);
 		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
+		MovecraftSignRegistry.INSTANCE.register("Squadron Name:", new SquadronNameSign(), "SName:");
+		MovecraftSignRegistry.INSTANCE.register("Squadron Remote", new SRCarrierCommandSign(), "SRemote");
 
 		getServer().getPluginManager().registerEvents(new ReleaseListener(), this);
 		getServer().getPluginManager().registerEvents(new SinkListener(), this);

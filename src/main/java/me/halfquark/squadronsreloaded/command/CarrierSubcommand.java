@@ -1,5 +1,7 @@
 package me.halfquark.squadronsreloaded.command;
 
+import me.halfquark.squadronsreloaded.SquadronsReloaded;
+import net.countercraft.movecraft.MovecraftLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -31,11 +33,34 @@ public class CarrierSubcommand {
             return;
 		}
 		Craft carrier = sq.getCarrier();
+        if (carrier == null) {
+            player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Carrier Found"));
+            return;
+        }
+
 		Location telPoint = getCraftTeleportPoint(carrier);
         if (carrier.getWorld() != player.getWorld()) {
             player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("ManOverboard - Other World"));
             return;
         }
+
+        MovecraftLocation squadronCenter = sq.getSquadronCenter();
+        if (squadronCenter == null) {
+            player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Center"));
+            return;
+        }
+        // TODO: Maybe change to distance squared
+        if (sq.getContacts().contains(carrier)) {
+            // All good
+        } else {
+            double distance = carrier.getHitBox().getMidPoint().distance(squadronCenter);
+            double compareDistance = SquadronsReloaded.getInstance().CARRIER_RETURN_MINIMAL_MAX_DISTANCE;
+            if (distance > compareDistance) {
+                player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - Carrier too far away"));
+                return;
+            }
+        }
+
 
         ManOverboardEvent event = new ManOverboardEvent(carrier, telPoint);
         Bukkit.getServer().getPluginManager().callEvent(event);
