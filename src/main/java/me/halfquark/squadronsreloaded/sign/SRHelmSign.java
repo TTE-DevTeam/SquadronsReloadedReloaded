@@ -22,7 +22,7 @@ public class SRHelmSign extends HelmSign implements ISquadronSign {
 
 	@Override
 	protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
-		if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
+		if (craft instanceof SquadronCraft sc) {
 			MovecraftRotation rotation = MovecraftRotation.fromAction(clickType);
 
 			if (!MathUtils.locIsNearCraftFast(craft, MathUtils.bukkit2MovecraftLoc(player.getLocation()))) {
@@ -40,14 +40,13 @@ public class SRHelmSign extends HelmSign implements ISquadronSign {
 					return false;
 
 				final MovecraftLocation signLoc = MathUtils.bukkit2MovecraftLoc(sign.block().getLocation());
-				for(SquadronCraft scTmp : squadron.getCrafts()) {
-					MovecraftLocation mLoc;
-					if (craft.getType().getBoolProperty(CraftType.ROTATE_AT_MIDPOINT)) {
-						mLoc = craft.getHitBox().getMidPoint();
-					} else {
-						mLoc = signLoc;
+
+				if (!player.isSneaking()) {
+					for (SquadronCraft scTmp : squadron.getCrafts()) {
+						processSingleCraft(scTmp, rotation, signLoc);
 					}
-					scTmp.rotate(rotation, mLoc, true);
+				} else {
+					processSingleCraft(sc, rotation, signLoc);
 				}
 
 				return true;
@@ -56,5 +55,15 @@ public class SRHelmSign extends HelmSign implements ISquadronSign {
 		else {
 			return super.internalProcessSignWithCraft(clickType, sign, craft, player);
 		}
+	}
+
+	protected void processSingleCraft(SquadronCraft craft, MovecraftRotation rotation, MovecraftLocation signLocation) {
+		MovecraftLocation mLoc;
+		if (craft.getType().getBoolProperty(CraftType.ROTATE_AT_MIDPOINT)) {
+			mLoc = craft.getHitBox().getMidPoint();
+		} else {
+			mLoc = signLocation;
+		}
+		craft.rotate(rotation, mLoc, true);
 	}
 }
