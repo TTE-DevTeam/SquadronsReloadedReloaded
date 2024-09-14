@@ -1,5 +1,7 @@
 package me.halfquark.squadronsreloaded.squadron;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -8,6 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nullable;
 
+import net.countercraft.movecraft.MovecraftLocation;
 import org.bukkit.entity.Player;
 
 import me.halfquark.squadronsreloaded.formation.Formation;
@@ -30,6 +33,7 @@ public class Squadron {
 	private boolean cruising;
 	private CruiseDirection cruiseDirection;
 	private boolean pilotLocked;
+	private String name = null;
 	
 	public Squadron(Player p) {
 		pilot = p;
@@ -41,7 +45,10 @@ public class Squadron {
 		cruising = false;
 		pilotLocked = false;
 	}
-	
+
+	public String getName() {
+		return this.name;
+	}
 	public Player getPilot() {return pilot;}
 	public ConcurrentMap<SquadronCraft, Integer> getCraftMap() {return crafts;}
 	public Set<SquadronCraft> getCrafts() {return crafts.keySet();}
@@ -52,7 +59,14 @@ public class Squadron {
 	public CruiseDirection getDirection() {return orientation;}
 	public boolean getCruising() {return cruising;}
 	public CruiseDirection getCruiseDirection() {return cruiseDirection;}
-	
+
+	public String setName(String value) {
+		if (this.name == null) {
+			this.name = value;
+		}
+		return this.name;
+	}
+
 	public int getSize() {return (crafts == null)?(0):(crafts.size());}
 	public int getDisplacement() {
 		if(crafts == null)
@@ -169,6 +183,23 @@ public class Squadron {
 		formation = f;
 		spacing = s;
 	}
+
+	@Nullable
+	public MovecraftLocation getSquadronCenter() {
+		MovecraftLocation result = new MovecraftLocation(0, 0, 0);
+		int divisor = 0;
+		for (Craft craft : this.getCrafts()) {
+			if (craft == null) {
+				continue;
+			}
+			divisor++;
+			result = result.add(craft.getHitBox().getMidPoint());
+		}
+		if (divisor == 0) {
+			return null;
+		}
+		return result.scalarDivide(divisor);
+	}
 	
 	public void setDirection(CruiseDirection cd) {orientation = cd;}
 	public void setCruising(boolean b) {cruising = b;}
@@ -188,5 +219,12 @@ public class Squadron {
 		}
 		return out;
 	}
-	
+
+	public Collection<Craft> getContacts() {
+		Set<Craft> result = new HashSet<>();
+		for (Craft craft : this.getCrafts()) {
+			result.addAll(craft.getDataTag(Craft.CONTACTS));
+		}
+		return result;
+	}
 }
