@@ -1,5 +1,6 @@
 package me.halfquark.squadronsreloaded.listener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -29,10 +30,12 @@ public class ReleaseListener implements Listener {
 		if(e.getCraft() instanceof PlayerCraft) {
 			List<Squadron> sqList = SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft) e.getCraft());
 			if(sqList.size() > 0) {
+				List<Squadron> toRemove = new ArrayList<>();
 				for(Squadron sq : sqList) {
 					sq.releaseAll(e.getReason());
-					SquadronManager.getInstance().removeSquadron(sq);
+					toRemove.add(sq);
 				}
+				toRemove.forEach(SquadronManager.getInstance()::removeSquadron);
 				return;
 			}
 		}
