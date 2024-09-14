@@ -34,6 +34,7 @@ public class SRSubcraftRotateSign extends SubcraftRotateSign implements ISquadro
                     super.internalProcessSignWithCraft(clickType, wrapperToUse, c, player);
                 });
             });
+            return true;
         }
         return super.internalProcessSignWithCraft(clickType, sign, craft, player);
     }
