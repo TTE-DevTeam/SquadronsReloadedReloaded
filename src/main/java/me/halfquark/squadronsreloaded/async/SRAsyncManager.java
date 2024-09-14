@@ -3,6 +3,8 @@ package me.halfquark.squadronsreloaded.async;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -21,7 +23,8 @@ public class SRAsyncManager extends BukkitRunnable {
 	
 	private static SRAsyncManager inst;
 	private final Map<Craft, Integer> cooldownCache = new WeakHashMap<>();
-	
+	private final Map<Squadron, Integer> squadronStepMap = new WeakHashMap<Squadron, Integer>();
+
 	public static void initialize(SquadronsReloaded pl) {
 		inst = new SRAsyncManager();
 		inst.runTaskTimer(pl, 0, 1);
@@ -180,12 +183,27 @@ public class SRAsyncManager extends BukkitRunnable {
 			}
 			if(sq.getCruising())
 				continue;
+
+			int step = squadronStepMap.computeIfAbsent(sq, (s) -> 0);
+
+			int id = 0;
 			for(SquadronCraft craft : sq.getCrafts()) {
+				if (id != step) {
+					id++;
+					continue;
+				}
 				CraftRotateManager.getInstance().adjustDirection(sq, craft);
 				if(sq.isFormingUp())
 					FormationFormer.formUp(craft);
 				craft.setLastCruiseUpdate(System.currentTimeMillis());
+				id++;
 			}
+
+			step++;
+			if (step >= sq.getCrafts().size()) {
+				step = 0;
+			}
+			squadronStepMap.put(sq, step);
 		}
 	}
 
