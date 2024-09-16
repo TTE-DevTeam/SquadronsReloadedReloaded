@@ -27,8 +27,9 @@ public class ReleaseListener implements Listener {
 
 	@EventHandler
 	public void onCraftRelease(CraftReleaseEvent e) {
+		// TODO: ConcurrentListAccessModification happens here... Fix it...
 		if(e.getCraft() instanceof PlayerCraft) {
-			List<Squadron> sqList = SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft) e.getCraft());
+			List<Squadron> sqList = new ArrayList<>(SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft) e.getCraft()));
 			if(sqList.size() > 0) {
 				List<Squadron> toRemove = new ArrayList<>();
 				for(Squadron sq : sqList) {

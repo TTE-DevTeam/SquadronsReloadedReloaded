@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SinkListener implements Listener {
@@ -27,7 +28,7 @@ public class SinkListener implements Listener {
 	@EventHandler
 	public void onCraftSink(CraftSinkEvent e) {
 		if(e.getCraft() instanceof PlayerCraft) {
-			List<Squadron> sqList = SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft)e.getCraft());
+			List<Squadron> sqList = new ArrayList<>(SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft)e.getCraft()));
 			if(sqList.size() > 0) {
 				for(Squadron sq : sqList) {
 					sq.sinkAll();

@@ -29,7 +29,7 @@ public class SRSubcraftRotateSign extends SubcraftRotateSign implements ISquadro
     protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, @Nullable Craft craft, Player player) {
         if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron squadron = sc.getSquadron();
-            this.findMatchingSignsInSquadronPerCraft(squadron, sign).forEach((c, s) -> {
+            this.findMatchingSignsInSquadronPerCraft(squadron, sign, null).forEach((c, s) -> {
                 s.forEach((wrapperToUse) -> {
                     super.internalProcessSignWithCraft(clickType, wrapperToUse, c, player);
                 });

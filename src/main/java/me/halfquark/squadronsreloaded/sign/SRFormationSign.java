@@ -1,26 +1,18 @@
 package me.halfquark.squadronsreloaded.sign;
 
-import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.sign.AbstractMovecraftSign;
-import net.countercraft.movecraft.sign.SignListener;
-import org.bukkit.ChatColor;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-
 import me.halfquark.squadronsreloaded.formation.Formation;
 import me.halfquark.squadronsreloaded.formation.FormationManager;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
+import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.sign.AbstractMovecraftSign;
+import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.ChatUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.jetbrains.annotations.Nullable;
 
 // TODO: Permissions

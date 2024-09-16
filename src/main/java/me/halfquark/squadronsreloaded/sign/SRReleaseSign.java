@@ -1,24 +1,16 @@
 package me.halfquark.squadronsreloaded.sign;
 
-import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.sign.ReleaseSign;
-import net.countercraft.movecraft.sign.SignListener;
-import org.bukkit.ChatColor;
-import org.bukkit.Tag;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-
 import me.halfquark.squadronsreloaded.squadron.Squadron;
+import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.events.CraftReleaseEvent.Reason;
 import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.sign.ReleaseSign;
+import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.ChatUtils;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
 
 public class SRReleaseSign extends ReleaseSign {

@@ -23,21 +23,34 @@ import java.util.function.Function;
 
 public interface ISquadronSign {
 
-    public default List<SignListener.SignWrapper> findMatchingSignsInSquadron(final @NotNull Squadron squadron, final SignListener.SignWrapper originalSign) {
+    public default List<SignListener.SignWrapper> findMatchingSignsInSquadron(final @NotNull Squadron squadron, final SignListener.SignWrapper originalSign, @Nullable SquadronCraft squadronToIgnore) {
         List<SignListener.SignWrapper> result = new ObjectArrayList<>();
-        this.findMatchingSignsInSquadronPerCraft(squadron, originalSign).values().forEach(result::addAll);
+
+        final Function<SignListener.SignWrapper, Boolean> testFunction = originalSign::areSignsEqual;
+        // TODO: Use trackedlocations for finding signs
+        squadron.getCrafts().forEach(craft -> {
+            if (craft != squadronToIgnore) {
+                Collection<SignListener.SignWrapper> entries = findAllSignsOnCraft(craft, testFunction);
+                if (!entries.isEmpty()) {
+                    result.addAll(entries);
+                }
+            }
+        }) ;
+
         return result;
     }
 
-    public default Map<SquadronCraft, Collection<SignListener.SignWrapper>> findMatchingSignsInSquadronPerCraft(final @NotNull Squadron squadron, final SignListener.SignWrapper originalSign) {
+    public default Map<SquadronCraft, Collection<SignListener.SignWrapper>> findMatchingSignsInSquadronPerCraft(final @NotNull Squadron squadron, final SignListener.SignWrapper originalSign, @Nullable SquadronCraft squadronToIgnore) {
         Map<SquadronCraft, Collection<SignListener.SignWrapper>> result = new Object2ObjectArrayMap<>();
 
         final Function<SignListener.SignWrapper, Boolean> testFunction = originalSign::areSignsEqual;
         // TODO: Use trackedlocations for finding signs
         squadron.getCrafts().forEach(craft -> {
-            Collection<SignListener.SignWrapper> entries = findAllSignsOnCraft(craft, testFunction);
-            if (!entries.isEmpty()) {
-                result.put(craft, entries);
+            if (craft != squadronToIgnore) {
+                Collection<SignListener.SignWrapper> entries = findAllSignsOnCraft(craft, testFunction);
+                if (!entries.isEmpty()) {
+                    result.put(craft, entries);
+                }
             }
         }) ;
 
