@@ -29,8 +29,17 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
     @Override
     protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Player player, @Nullable Craft craft) {
         if (clickType.isRightClick()) {
+            if (craft instanceof SquadronCraft squadronCraft) {
+                if (this.craftType.getBoolProperty(CraftType.CRUISE_ON_PILOT)) {
+                    // TODO: Add whitelist or blacklist for synched launches
+                    this.findMatchingSignsInSquadronPerCraft(squadronCraft.getSquadron(), sign, squadronCraft).forEach(
+                            (squadronCraftTmp, signs) -> {
+                                signs.forEach(sw -> super.internalProcessSign(clickType, sw, player, squadronCraftTmp));
+                            }
+                    );
+                }
+            }
             return super.internalProcessSign(clickType, sign, player, craft);
-
         } else {
             if (!player.hasPermission("movecraft.squadron.pilot")) {
                 player.sendMessage(I18nSupport.getInternationalisedString("Insufficient Permissions"));
