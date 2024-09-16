@@ -4,6 +4,7 @@ import me.halfquark.squadronsreloaded.async.SRAsyncManager;
 import me.halfquark.squadronsreloaded.command.SquadronCommand;
 import me.halfquark.squadronsreloaded.formation.FormationManager;
 import me.halfquark.squadronsreloaded.listener.*;
+import me.halfquark.squadronsreloaded.listener.craft.*;
 import me.halfquark.squadronsreloaded.move.CraftProximityManager;
 import me.halfquark.squadronsreloaded.move.CraftRotateManager;
 import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
@@ -94,7 +95,7 @@ public class SquadronsReloaded extends JavaPlugin {
 		CraftProximityManager.initialize();
 		SRAsyncManager.initialize(this);
 		
-		getServer().getPluginManager().registerEvents(new SRSignLeftClickListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
 		getServer().getPluginManager().registerEvents(new SRInteractListener(), this);
 		getServer().getPluginManager().registerEvents(new SRPlayerListener(), this);
 		//getServer().getPluginManager().registerEvents(new SRCruiseSign(), this);
@@ -119,13 +120,13 @@ public class SquadronsReloaded extends JavaPlugin {
 		MovecraftSignRegistry.INSTANCE.register("Squadron Name:", new SquadronNameSign(), "SName:");
 		MovecraftSignRegistry.INSTANCE.register("Squadron Remote", new SRCarrierCommandSign(), "SRemote");
 
-		getServer().getPluginManager().registerEvents(new ReleaseListener(), this);
-		getServer().getPluginManager().registerEvents(new SinkListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftReleaseListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
 		getServer().getPluginManager().registerEvents(new SwitchListener(), this);
 		getServer().getPluginManager().registerEvents(new RedstoneComponentListener(), this);
 		
-		getServer().getPluginManager().registerEvents(new TranslationListener(), this);
-		getServer().getPluginManager().registerEvents(new RotationListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
 		sc = new SquadronCommand();
 		getCommand("squadron").setExecutor(sc);
 		getCommand("squadron").setTabCompleter(sc);
