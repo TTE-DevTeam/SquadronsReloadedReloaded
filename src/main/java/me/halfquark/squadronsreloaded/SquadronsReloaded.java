@@ -3,8 +3,11 @@ package me.halfquark.squadronsreloaded;
 import me.halfquark.squadronsreloaded.async.SRAsyncManager;
 import me.halfquark.squadronsreloaded.command.SquadronCommand;
 import me.halfquark.squadronsreloaded.formation.FormationManager;
-import me.halfquark.squadronsreloaded.listener.*;
 import me.halfquark.squadronsreloaded.listener.craft.*;
+import me.halfquark.squadronsreloaded.listener.player.PlayerInteractListener;
+import me.halfquark.squadronsreloaded.listener.player.PlayerMovementListener;
+import me.halfquark.squadronsreloaded.listener.redstone.RedstoneComponentListener;
+import me.halfquark.squadronsreloaded.listener.redstone.SwitchListener;
 import me.halfquark.squadronsreloaded.move.CraftProximityManager;
 import me.halfquark.squadronsreloaded.move.CraftRotateManager;
 import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
@@ -96,8 +99,8 @@ public class SquadronsReloaded extends JavaPlugin {
 		SRAsyncManager.initialize(this);
 		
 		getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
-		getServer().getPluginManager().registerEvents(new SRInteractListener(), this);
-		getServer().getPluginManager().registerEvents(new SRPlayerListener(), this);
+		getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+		getServer().getPluginManager().registerEvents(new PlayerMovementListener(), this);
 		//getServer().getPluginManager().registerEvents(new SRCruiseSign(), this);
 		MovecraftSignRegistry.INSTANCE.register("Cruise:", new SRCruiseSign("Cruise:"), true);
 		//getServer().getPluginManager().registerEvents(new SRHelmSign(), this);
