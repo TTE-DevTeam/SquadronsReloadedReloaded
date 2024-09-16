@@ -1,10 +1,14 @@
 package me.halfquark.squadronsreloaded.listener.player;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
 import me.halfquark.squadronsreloaded.SquadronsReloaded;
+import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
+import me.halfquark.squadronsreloaded.squadron.Squadron;
+import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
+import me.halfquark.squadronsreloaded.squadron.SquadronManager;
+import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.listener.InteractListener;
+import net.countercraft.movecraft.localisation.I18nSupport;
+import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,17 +16,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.RegisteredListener;
 
-import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
-import me.halfquark.squadronsreloaded.squadron.Squadron;
-import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
-import me.halfquark.squadronsreloaded.squadron.SquadronManager;
-import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.listener.InteractListener;
-import net.countercraft.movecraft.localisation.I18nSupport;
-import net.countercraft.movecraft.util.MathUtils;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class PlayerInteractListener implements Listener {
 	
@@ -63,9 +63,9 @@ public class PlayerInteractListener implements Listener {
 		
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			event.setCancelled(true);
-		    
-			Craft onBoardCraft = null;
-		    for(Craft craft : sq.getCrafts()) {
+
+			SquadronCraft onBoardCraft = null;
+		    for(SquadronCraft craft : sq.getCrafts()) {
 		    	if (MathUtils.locationNearHitBox(craft.getHitBox(),event.getPlayer().getLocation(),2)) {
 		    		onBoardCraft = craft;
 			        break;
@@ -78,8 +78,17 @@ public class PlayerInteractListener implements Listener {
 		    if(timeMap.containsKey(event.getPlayer())) {
                 timeMap.put(event.getPlayer(), System.currentTimeMillis());
             }
+
+			Set<SquadronCraft> craftsToProcess;
+
+			// Allow to control squadron members individually
+			if (event.getHand().isHand() && event.getHand() == EquipmentSlot.OFF_HAND) {
+				craftsToProcess = Set.of(onBoardCraft);
+			} else {
+				craftsToProcess = sq.getCrafts();
+			}
 		    
-		    for(SquadronCraft craft : sq.getCrafts()) {
+		    for(SquadronCraft craft : craftsToProcess) {
 			    if(CraftTranslateManager.getInstance().isInCooldown(craft))
 			    	continue;
 			
