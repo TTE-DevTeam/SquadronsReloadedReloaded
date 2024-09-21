@@ -6,9 +6,7 @@ import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.sign.CruiseSign;
 import net.countercraft.movecraft.sign.SignListener;
-import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
 
 public class SRCruiseSign extends CruiseSign implements ISquadronSign {
@@ -20,26 +18,6 @@ public class SRCruiseSign extends CruiseSign implements ISquadronSign {
     @Override
     protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
         return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
-    }
-
-    @Override
-    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
-        // Are we sure we want to keep that?
-        if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
-            boolean onBoardCraft = false;
-            for(Craft scTmp : sc.getSquadron().getCrafts()) {
-                if (MathUtils.locationNearHitBox(craft.getHitBox(), player.getLocation(),2)) {
-                    onBoardCraft = true;
-                    break;
-                }
-            }
-            if(!onBoardCraft)
-                return false;
-            return true;
-        }
-
-
-        return super.internalProcessSignWithCraft(clickType, sign, craft, player);
     }
 
     @Override
