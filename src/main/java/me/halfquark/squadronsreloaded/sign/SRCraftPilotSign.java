@@ -42,16 +42,21 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             return super.internalProcessSign(clickType, sign, player, craft);
         } else {
             if (!player.hasPermission("movecraft.squadron.pilot")) {
-                player.sendMessage(I18nSupport.getInternationalisedString("Insufficient Permissions"));
+                player.sendMessage(I18nSupport.getInternationalisedComponent("Insufficient Permissions"));
                 return false;
             }
 
             if (SquadronsReloaded.NEEDSCARRIER && craft == null) {
-                player.sendMessage(I18nSupport.getInternationalisedString("Squadrons - Needs to be carried"));
+                player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Needs to be carried"));
+            }
+
+            if (craft instanceof SquadronCraft) {
+                player.sendMessage(I18nSupport.getInternationalisedComponent("This squadron is already in use!"));
+                return false;
             }
 
             if (!SquadronsReloaded.CARRIEDTYPES.contains(this.craftType.getStringProperty(CraftType.NAME))) {
-                // TODO: Message player
+                player.sendMessage(I18nSupport.getInternationalisedComponent("This crafttype is not supported as squadron!"));
                 return false;
             }
             PlayerCraft playerCraft = null;
@@ -62,6 +67,10 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                             playerCraft = (PlayerCraft) c;
                             break;
                         }
+                        if (c instanceof SquadronCraft) {
+                            player.sendMessage(I18nSupport.getInternationalisedComponent("This squadron is already in use!"));
+                            return false;
+                        }
                     }
                 }
             } else {
@@ -69,7 +78,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             }
 
             if (playerCraft == null) {
-                player.sendMessage(I18nSupport.getInternationalisedString("Squadrons - Must pilot a carrier"));
+                player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Must pilot a carrier"));
                 return false;
             }
 
