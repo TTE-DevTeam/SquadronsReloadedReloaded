@@ -3,6 +3,7 @@ package me.halfquark.squadronsreloaded.squadron;
 import javax.annotation.Nonnull;
 
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.PilotedCraft;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ import net.countercraft.movecraft.craft.SubCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import org.jetbrains.annotations.NotNull;
 
-public class SquadronCraft extends BaseCraft implements SubCraft {
+public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft {
 	
 	private Player pilot;
 	private Squadron squadron;
@@ -39,5 +40,12 @@ public class SquadronCraft extends BaseCraft implements SubCraft {
 	public boolean isLead() {
 		return squadron.getLeadCraft().equals(this);
 	}
-	
+
+	@Override
+	public @NotNull Player getPilot() {
+		if (this.getSquadron().getPilot() != null) {
+			return this.getSquadron().getPilot();
+		}
+		return this.pilot;
+	}
 }
