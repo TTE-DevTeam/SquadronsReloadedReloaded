@@ -1,10 +1,14 @@
 package me.halfquark.squadronsreloaded.listener.craft;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +31,8 @@ public class CraftReleaseListener implements Listener {
 
 	@EventHandler
 	public void onCraftRelease(CraftReleaseEvent e) {
-		// TODO: ConcurrentListAccessModification happens here... Fix it...
+		// We don't care about normal releases :)
+		// DONE: ConcurrentListAccessModification happens here... Fix it...
 		if(e.getCraft() instanceof PlayerCraft) {
 			List<Squadron> sqList = new ArrayList<>(SquadronManager.getInstance().getCarrierSquadrons((PlayerCraft) e.getCraft()));
 			if(sqList.size() > 0) {
@@ -42,8 +47,15 @@ public class CraftReleaseListener implements Listener {
 		}
 		if(!(e.getCraft() instanceof SquadronCraft))
 			return;
+
 		SquadronCraft craft = (SquadronCraft) e.getCraft();
 		Squadron sq = craft.getSquadron();
+
+		if (e.getReason() == CraftReleaseEvent.Reason.PLAYER) {
+			attemptToAddSquadronBackToParent(craft, sq);
+			return;
+		}
+
 		if(sq == null)
 			return;
 		if(sq.getCarrier() != null) {
@@ -85,7 +97,85 @@ public class CraftReleaseListener implements Listener {
 			}
 		}
 	}
-	
+
+	private static void attemptToAddSquadronBackToParent(SquadronCraft squadronCraft, Squadron squadron) {
+		if (squadron.getCarrier() == null) {
+			return;
+		}
+
+		PlayerCraft carrier = squadron.getCarrier();
+		HitBox carrierHitBox = carrier.getHitBox();
+
+		if (!carrierHitBox.inBounds(squadronCraft.getHitBox().getMinX(), squadronCraft.getHitBox().getMinY(), squadronCraft.getHitBox().getMinZ())) {
+			if (!carrierHitBox.inBounds(squadronCraft.getHitBox().getMaxX(), squadronCraft.getHitBox().getMaxY(), squadronCraft.getHitBox().getMaxZ())) {
+				// Skiff can not be within the carrier
+				return;
+			}
+		}
+
+		// We are within the carrier
+		// Now, are we touching it?
+		// If the carrier may merge to the skiff, then we add it back
+		if (checkCraftBorders(carrier, squadronCraft)) {
+			carrier.setHitBox(carrier.getHitBox().union(squadronCraft.getHitBox()));
+		}
+	}
+
+	private static boolean checkCraftBorders(Craft carrierCraft, SquadronCraft squadronCraft) {
+		final EnumSet<Material> ALLOWED_BLOCKS = carrierCraft.getType().getMaterialSetProperty(CraftType.ALLOWED_BLOCKS);
+		final EnumSet<Material> FORBIDDEN_BLOCKS = carrierCraft.getType().getMaterialSetProperty(CraftType.FORBIDDEN_BLOCKS);
+		final MovecraftLocation[] SHIFTS = {
+				//x
+				new MovecraftLocation(-1, 0, 0),
+				new MovecraftLocation(-1, -1, 0),
+				new MovecraftLocation(-1,1,0),
+				new MovecraftLocation(1, -1, 0),
+				new MovecraftLocation(1, 1, 0),
+				new MovecraftLocation(1, 0, 0),
+				//z
+				new MovecraftLocation(0, 1, 1),
+				new MovecraftLocation(0, 0, 1),
+				new MovecraftLocation(0, -1, 1),
+				new MovecraftLocation(0, 1, -1),
+				new MovecraftLocation(0, 0, -1),
+				new MovecraftLocation(0, -1, -1),
+				//y
+				new MovecraftLocation(0, 1, 0),
+				new MovecraftLocation(0, -1, 0)};
+		//Check each location in the hitbox
+		for (MovecraftLocation ml : carrierCraft.getHitBox()){
+			//Check the surroundings of each location
+			for (MovecraftLocation shift : SHIFTS){
+				MovecraftLocation test = ml.add(shift);
+				//Ignore locations contained in the craft's hitbox
+				if (carrierCraft.getHitBox().contains(test)){
+					continue;
+				}
+
+				if (!squadronCraft.getHitBox().inBounds(test)) {
+					continue;
+				}
+
+				if (!squadronCraft.getHitBox().contains(test)) {
+					continue;
+				}
+
+				Block testBlock = test.toBukkit(carrierCraft.getWorld()).getBlock();
+				Material testMaterial = testBlock.getType();
+				//Break the loop if an allowed block is found adjacent to the craft's hitbox
+				if (ALLOWED_BLOCKS.contains(testMaterial)){
+					return true;
+				}
+				//Do the same if a forbidden block is found
+				else if (FORBIDDEN_BLOCKS.contains(testMaterial)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
 	private Location getCraftTeleportPoint(Craft craft) {
         double telX = (craft.getHitBox().getMinX() + craft.getHitBox().getMaxX())/2D + 0.5D;
         double telZ = (craft.getHitBox().getMinZ() + craft.getHitBox().getMaxZ())/2D + 0.5D;
