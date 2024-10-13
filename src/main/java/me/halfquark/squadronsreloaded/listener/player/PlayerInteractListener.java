@@ -9,50 +9,18 @@ import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.listener.InteractListener;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.MathUtils;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.plugin.RegisteredListener;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class PlayerInteractListener implements Listener {
 	
-	private Map<Player, Long> timeMap;
-	
-	@SuppressWarnings("unchecked")
-	public PlayerInteractListener() {
-		HandlerList handlers = PlayerInteractEvent.getHandlerList();
-		for(RegisteredListener l : handlers.getRegisteredListeners()) {
-            if (!l.getPlugin().isEnabled()) {
-                continue;
-            }
-            if(l.getListener() instanceof InteractListener) {
-                InteractListener pl = (InteractListener) l.getListener();
-                Class<InteractListener> plclass = InteractListener.class;
-                try {
-                    Field field = plclass.getDeclaredField("timeMap");
-                    field.setAccessible(true);
-                    timeMap = (Map<Player, Long>) field.get(pl);
-                }
-                catch(Exception exception) {
-                    exception.printStackTrace();
-                    timeMap = new HashMap<>();
-                }
-                return;
-            }
-		}
-		timeMap = new HashMap<>();
-	}
-
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteractStick(PlayerInteractEvent event) {
 		Squadron sq = SquadronManager.getInstance().getPlayerSquadron(event.getPlayer(), true);
@@ -75,8 +43,8 @@ public class PlayerInteractListener implements Listener {
 		    	return;
 			
 		    //Prevent carrier from moving
-		    if(timeMap.containsKey(event.getPlayer())) {
-                timeMap.put(event.getPlayer(), System.currentTimeMillis());
+		    if(InteractListener.INTERACTION_TIME_MAP.containsKey(event.getPlayer().getUniqueId())) {
+				InteractListener.INTERACTION_TIME_MAP.put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
             }
 
 			Set<SquadronCraft> craftsToProcess;
