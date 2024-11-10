@@ -61,7 +61,9 @@ public class InfoSubcommand {
 	private void displaySquadron(Squadron sq, CommandSender sender) {
 		sender.sendMessage(I18nSupport.getInternationalisedString("Squadron:"));
 		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Pilot:" + sq.getPilot().getName()));
-		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Carrier:" + ((sq.getCarrier().getName() != "")?sq.getCarrier().getName():sq.getCarrier().getType().getStringProperty(CraftType.NAME))));
+		if (sq.getCarrier() != null) {
+			sender.sendMessage(">" + I18nSupport.getInternationalisedString("Carrier:" + ((sq.getCarrier().getName() != "")?sq.getCarrier().getName():sq.getCarrier().getType().getStringProperty(CraftType.NAME))));
+		}
 		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Crafts:"));
 		List<Entry<SquadronCraft, Integer>> sortedCrafts = new ArrayList<>(sq.getCraftMap().entrySet());
 		Collections.sort(
