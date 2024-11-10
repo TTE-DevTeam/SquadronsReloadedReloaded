@@ -77,25 +77,33 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                 playerCraft = (PlayerCraft) craft;
             }
 
-            if (playerCraft == null) {
+            if (playerCraft == null && SquadronsReloaded.NEEDSCARRIER) {
                 player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Must pilot a carrier"));
                 return false;
+            } else {
+                if (!SquadronsReloaded.CARRIERTYPES.contains(playerCraft.getType().getStringProperty(CraftType.NAME))) {
+                    player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Piloted craft is not a carrier type"));
+                    return false;
+                }
             }
 
-            if (!SquadronsReloaded.CARRIERTYPES.contains(playerCraft.getType().getStringProperty(CraftType.NAME))) {
-                // TODO: Message player
+            Squadron squadron = SquadronManager.getInstance().getPlayerSquadron(player, false);
+            if(squadron == null) {
+                squadron = new Squadron(player);
+                if (playerCraft != null) {
+                    squadron.setCarrier(playerCraft);
+                    playerCraft.getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).add(squadron);
+                }
+                SquadronManager.getInstance().putSquadron(player, squadron);
+            }
+
+            // This should never happen!
+            if (squadron == null) {
+                player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - No squadron found for player. This should never happen!"));
                 return false;
             }
 
-            Squadron squadron;
-            if(SquadronManager.getInstance().getPlayerSquadron(player, false) == null) {
-                squadron = new Squadron(player);
-                squadron.setCarrier(playerCraft);
-                playerCraft.getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).add(squadron);
-                SquadronManager.getInstance().putSquadron(player, squadron);
-            } else {
-                squadron = SquadronManager.getInstance().getPlayerSquadron(player, false);
-            }
+            final Squadron fSquadron = squadron;
             // Attempt to run detection
             Location loc = sign.block().getLocation();
             MovecraftLocation startPoint = new MovecraftLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
@@ -106,7 +114,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                             return new Pair<>(Result.fail(), null);
                         }
 
-                        final SquadronCraft c = new SquadronCraft(this.craftType, loc.getWorld(), p, squadron);
+                        final SquadronCraft c = new SquadronCraft(this.craftType, loc.getWorld(), p, fSquadron);
                         return new Pair<>(Result.succeed(), c);
                     },
                     player.getWorld(), player,

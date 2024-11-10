@@ -31,17 +31,17 @@ public class SRFormationSign extends AbstractMovecraftSign {
     protected boolean isSignValid(Action action, SignListener.SignWrapper signWrapper, Player player) {
         this.formation = FormationManager.getInstance().getFormation(signWrapper.getRaw(1));
         if(this.formation == null) {
-            player.sendMessage(ChatUtils.ERROR_PREFIX + I18nSupport.getInternationalisedString("Squadrons - Specify a valid formation"));
+            player.sendMessage(ChatUtils.errorPrefix().append(I18nSupport.getInternationalisedComponent("Squadrons - Specify a valid formation")));
             return false;
         }
         try {
             this.spacing = Integer.valueOf(signWrapper.getRaw(2));
         } catch(NumberFormatException e) {
-            player.sendMessage(ChatUtils.ERROR_PREFIX + I18nSupport.getInternationalisedString("Squadrons - Specify a valid integer"));
+            player.sendMessage(ChatUtils.errorPrefix().append(I18nSupport.getInternationalisedComponent("Squadrons - Specify a valid integer")));
             return false;
         }
         if(spacing < formation.getMinSpacing() || formation.getMaxSpacing() < spacing) {
-            player.sendMessage(ChatUtils.ERROR_PREFIX + I18nSupport.getInternationalisedString("Squadrons - Spacing has to be in range")
+            player.sendMessage(ChatUtils.ERROR_PREFIX + I18nSupport.getInternationalisedComponent("Squadrons - Spacing has to be in range")
                     + " [" + String.valueOf(formation.getMinSpacing()) + "," + String.valueOf(formation.getMaxSpacing()) + "]");
             return false;
         }
