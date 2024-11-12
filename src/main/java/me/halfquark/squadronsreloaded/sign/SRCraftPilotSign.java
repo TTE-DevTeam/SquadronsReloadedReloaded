@@ -80,7 +80,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             if (playerCraft == null && SquadronsReloaded.NEEDSCARRIER) {
                 player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Must pilot a carrier"));
                 return false;
-            } else {
+            } else if (playerCraft != null) {
                 if (!SquadronsReloaded.CARRIERTYPES.contains(playerCraft.getType().getStringProperty(CraftType.NAME))) {
                     player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Piloted craft is not a carrier type"));
                     return false;
