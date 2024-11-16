@@ -109,9 +109,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             Location loc = sign.block().getLocation();
             MovecraftLocation startPoint = new MovecraftLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
-            if (playerCraft != null) {
-                runDetectTaskWithPlayerCraft(squadron, startPoint, player, loc.getWorld());
-            }
+            runDetectTaskWithPlayerCraft(squadron, startPoint, player, loc.getWorld());
 
             return true;
         }
