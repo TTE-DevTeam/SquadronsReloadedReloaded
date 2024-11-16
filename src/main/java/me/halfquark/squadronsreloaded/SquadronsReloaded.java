@@ -19,6 +19,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
 import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
+import net.countercraft.movecraft.listener.CraftTypeListener;
 import net.countercraft.movecraft.sign.HelmSign;
 import net.countercraft.movecraft.sign.MovecraftSignRegistry;
 import org.bukkit.Material;
@@ -127,6 +128,7 @@ public class SquadronsReloaded extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
 		getServer().getPluginManager().registerEvents(new SwitchListener(), this);
 		getServer().getPluginManager().registerEvents(new RedstoneComponentListener(), this);
+		getServer().getPluginManager().registerEvents(new CraftTypeListener(), this);
 		
 		getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
 		getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
