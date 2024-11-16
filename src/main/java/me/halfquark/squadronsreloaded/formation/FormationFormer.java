@@ -21,9 +21,14 @@ public class FormationFormer {
 		Double x = (double) sq.getLeadCraft().getHitBox().getMidPoint().getX();
 		Double y = (double) sq.getLeadCraft().getHitBox().getMidPoint().getY();
 		Double z = (double) sq.getLeadCraft().getHitBox().getMidPoint().getZ();
-		x += formation.getXPosition(sq.getCraftRank(craft), sq.getSpacing(), cd);
-		y += formation.getYPosition(sq.getCraftRank(craft), sq.getSpacing(), cd);
-		z += formation.getZPosition(sq.getCraftRank(craft), sq.getSpacing(), cd);
+
+		final int craftRadiusX = (craft.getHitBox().getMaxX() - craft.getHitBox().getMinX()) / 2;
+		final int craftRadiusY = (craft.getHitBox().getMaxY() - craft.getHitBox().getMinY()) / 2;
+		final int craftRadiusZ = (craft.getHitBox().getMaxZ() - craft.getHitBox().getMinZ()) / 2;
+
+		x += formation.getXPosition(sq.getCraftRank(craft), sq.getSpacing() + craftRadiusX, cd);
+		y += formation.getYPosition(sq.getCraftRank(craft), sq.getSpacing() + craftRadiusY, cd);
+		z += formation.getZPosition(sq.getCraftRank(craft), sq.getSpacing() + craftRadiusZ, cd);
 		MovecraftLocation mLoc = craft.getHitBox().getMidPoint();
 		if((x-mLoc.getX())*(x-mLoc.getX()) + (y-mLoc.getY())*(y-mLoc.getY()) + (z-mLoc.getZ())*(z-mLoc.getZ()) <= Math.pow(SquadronsReloaded.FORMATIONROUNDDISTANCE, 2))
 			return;
