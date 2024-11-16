@@ -16,6 +16,7 @@ import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Pair;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
@@ -107,24 +108,32 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
             // Attempt to run detection
             Location loc = sign.block().getLocation();
             MovecraftLocation startPoint = new MovecraftLocation(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-            CraftManager.getInstance().detect(
-                    startPoint,
-                    this.craftType, (t, w, p, parents) -> {
-                        if (p == null || parents.size() == 0) {
-                            return new Pair<>(Result.fail(), null);
-                        }
 
-                        final SquadronCraft c = new SquadronCraft(this.craftType, loc.getWorld(), p, fSquadron);
-                        return new Pair<>(Result.succeed(), c);
-                    },
-                    player.getWorld(), player,
-                    player,
-                    oldCraft -> () -> {
-                        // Release old craft if it exists
-                    }
-            );
+            if (playerCraft != null) {
+                runDetectTaskWithPlayerCraft(squadron, startPoint, player, loc.getWorld());
+            }
+
             return true;
         }
+    }
+
+    protected void runDetectTaskWithPlayerCraft(final Squadron squadron, final MovecraftLocation startPoint, final Player player, final World world) {
+        CraftManager.getInstance().detect(
+                startPoint,
+                this.craftType, (t, w, p, parents) -> {
+                    if (p == null || !(parents.size() > 0 || !SquadronsReloaded.NEEDSCARRIER)) {
+                        return new Pair<>(Result.failWithMessage("Player is null or parents are not present!"), null);
+                    }
+
+                    final SquadronCraft c = new SquadronCraft(this.craftType, world, p, squadron);
+                    return new Pair<>(Result.succeed(), c);
+                },
+                world, player,
+                player,
+                oldCraft -> () -> {
+                    // Release old craft if it exists
+                }
+        );
     }
 
 }
