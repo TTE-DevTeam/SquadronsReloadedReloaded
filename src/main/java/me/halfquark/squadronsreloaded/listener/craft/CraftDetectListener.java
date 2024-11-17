@@ -55,9 +55,11 @@ public class CraftDetectListener implements Listener {
         if(!cd.equals(CruiseDirection.NONE))
         	CraftRotateManager.getInstance().setDirection(c, cd);
         int position = squadron.putCraft(c);
-        squadron.getCarrier().setHitBox(squadron.getCarrier().getHitBox().difference(c.getHitBox()));
-        if(SquadronsReloaded.BLOCKCOUNTOVERRIDE)
-            squadron.getCarrier().setOrigBlockCount(squadron.getCarrier().getOrigBlockCount()-c.getOrigBlockCount());
+        if (squadron.getCarrier() != null) {
+			squadron.getCarrier().setHitBox(squadron.getCarrier().getHitBox().difference(c.getHitBox()));
+			if(SquadronsReloaded.BLOCKCOUNTOVERRIDE)
+				squadron.getCarrier().setOrigBlockCount(squadron.getCarrier().getOrigBlockCount()-c.getOrigBlockCount());
+		}
     	player.sendMessage(I18nSupport.getInternationalisedString(c.getType().getStringProperty(CraftType.NAME) + "(" + c.getHitBox().size() + ") added to squadron in position") + " " + position);
     }
 
