@@ -1,9 +1,6 @@
 package me.halfquark.squadronsreloaded.squadron;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,7 +19,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.CraftReleaseEvent.Reason;
 
 public class Squadron {
-	
+
 	private Player pilot;
 	private ConcurrentMap<SquadronCraft, Integer> crafts;
 	private PlayerCraft carrier;
@@ -33,7 +30,7 @@ public class Squadron {
 	private boolean cruising;
 	private CruiseDirection cruiseDirection;
 	private boolean pilotLocked;
-	private String name = null;
+	private String name = "";
 	
 	public Squadron(Player p) {
 		pilot = p;
@@ -44,6 +41,13 @@ public class Squadron {
 		orientation = null;
 		cruising = false;
 		pilotLocked = false;
+	}
+
+	public UUID getSquadronUUID() {
+		if (this.getLeadCraft() == null) {
+			return null;
+		}
+		return this.getLeadCraft().getUUID();
 	}
 
 	public String getName() {
@@ -223,7 +227,12 @@ public class Squadron {
 	public Collection<Craft> getContacts() {
 		Set<Craft> result = new HashSet<>();
 		for (Craft craft : this.getCrafts()) {
-			result.addAll(craft.getDataTag(Craft.CONTACTS));
+			craft.getDataTag(Craft.CONTACTS).forEach(
+					uuid -> {
+						Craft craftTmp = Craft.getCraftByUUID(uuid);
+						result.add(craftTmp);
+					}
+			);
 		}
 		return result;
 	}
