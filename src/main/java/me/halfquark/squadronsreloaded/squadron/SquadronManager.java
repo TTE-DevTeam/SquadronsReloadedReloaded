@@ -48,7 +48,7 @@ public class SquadronManager {
 		if(sq == null) {
 			return false;
 		}
-		if((sq.getCarrier() == null) && !SquadronsReloaded.NEEDSCARRIER) {
+		if((sq.getCarrier() == null) && SquadronsReloaded.NEEDSCARRIER) {
 			sq.sinkAll();
 			return false;
 		}
