@@ -165,11 +165,13 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	@Override
 	public double getDetectionMultiplier(boolean underwater, MovecraftWorld movecraftWorld) {
 		NamespacedKey key = underwater ? CraftType.PER_WORLD_UNDERWATER_DETECTION_MULTIPLIER : CraftType.PER_WORLD_DETECTION_MULTIPLIER;
-		if (this.getSquadron().getLeadCraft() != null) {
-			return (double)this.getSquadron().getLeadCraft().getType().getPerWorldProperty(key, movecraftWorld);
-		} else {
-			return (double)this.getType().getPerWorldProperty(key, movecraftWorld);
+		double sum = 0;
+		int counter = 0;
+		for (SquadronCraft sc : this.getSquadron().getCrafts()) {
+			counter++;
+			sum += (double)sc.getType().getPerWorldProperty(key, movecraftWorld);
 		}
+		return sum / ((double)counter);
 	}
 
 	@Override
