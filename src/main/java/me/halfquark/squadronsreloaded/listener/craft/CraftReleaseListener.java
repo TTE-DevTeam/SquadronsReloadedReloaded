@@ -99,6 +99,7 @@ public class CraftReleaseListener implements Listener {
 	}
 
 	private static void attemptToAddSquadronBackToParent(SquadronCraft squadronCraft, Squadron squadron) {
+		// TODO: Allow this for other carriers too?
 		if (squadron.getCarrier() == null) {
 			return;
 		}
