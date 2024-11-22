@@ -11,12 +11,16 @@ import net.countercraft.movecraft.features.contacts.ContactProvider;
 import net.countercraft.movecraft.features.contacts.ContactsManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.processing.MovecraftWorld;
+import net.countercraft.movecraft.sign.AbstractInformationSign;
 import net.countercraft.movecraft.util.Counter;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.util.TimingData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -134,6 +138,52 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 		notification = notification.append(Component.text("."));
 		return notification;
+	}
+
+	// Copied from AbstractInformationSign
+	protected static final Style STYLE_COLOR_GREEN = Style.style(TextColor.color(0, 255, 0));
+	protected static final Style STYLE_COLOR_YELLOW = Style.style(TextColor.color(255, 255, 0));
+	protected static final Style STYLE_COLOR_RED = Style.style(TextColor.color(255, 0, 0));
+	protected static final Style STYLE_COLOR_WHITE = Style.style(TextColor.color(255, 255, 255));
+
+	// Copied from ContactSign
+	protected final int MAX_DISTANCE_COLOR_RED = 64 * 64;
+	protected final int MAX_DISTANCE_COLOR_YELLOW = 128 * 128;
+
+	@Override
+	public Component getContactsLine(Craft detector) {
+		MovecraftLocation baseCenter = detector.getHitBox().getMidPoint();
+		MovecraftLocation targetCenter = this.getContactLocation();
+		int distanceSquared = baseCenter.distanceSquared(targetCenter);
+
+		String craftTypeName = "Squadron";
+		if (this.getSquadron().getName() != null && !this.getSquadron().getName().isBlank()) {
+			craftTypeName = this.getSquadron().getName();
+		}
+		if (craftTypeName.length() > 9)
+			craftTypeName = craftTypeName.substring(0, 7);
+
+		Style style = STYLE_COLOR_GREEN;
+		if (distanceSquared <= MAX_DISTANCE_COLOR_RED) {
+			style = STYLE_COLOR_RED;
+		}
+		else if (distanceSquared <= MAX_DISTANCE_COLOR_YELLOW) {
+			style = STYLE_COLOR_YELLOW;
+		}
+
+		style = style.decorate(TextDecoration.ITALIC);
+
+		Component result = Component.text(craftTypeName + " ").style(style);
+
+		double distance = Math.sqrt(distanceSquared);
+		distance = distance / 1000;
+
+		String directionStr = "" + String.format("%.2f", distance);
+		final BlockFace direction = ContactsManager.getDirection(baseCenter, targetCenter);
+		directionStr = directionStr + " " + ContactsManager.getDirectionAppreviation(direction);
+		result = result.append(Component.text(directionStr).style(STYLE_COLOR_WHITE));
+		String tmp = PlainTextComponentSerializer.plainText().serialize(result);
+		return result;
 	}
 
 	@Override
