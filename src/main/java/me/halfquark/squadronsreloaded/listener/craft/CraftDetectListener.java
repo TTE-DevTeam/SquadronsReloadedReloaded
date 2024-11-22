@@ -33,12 +33,13 @@ public class CraftDetectListener implements Listener {
     		CraftManager.getInstance().release(c, Reason.EMPTY, true);
     		return;
     	}
-        if(squadron.getSize() + 1 > SquadronsReloaded.SQUADMAXSIZE + SquadronsReloaded.SQUADMAXSIZECARRIERMULT * squadron.getCarrier().getOrigBlockCount()) {
+		final int carrierBlockCount = (squadron.getCarrier() != null ? squadron.getCarrier().getOrigBlockCount() : 1);
+        if(squadron.getSize() + 1 > SquadronsReloaded.SQUADMAXSIZE + SquadronsReloaded.SQUADMAXSIZECARRIERMULT * carrierBlockCount) {
         	player.sendMessage(I18nSupport.getInternationalisedString("Squadrons - Too many crafts"));
         	CraftManager.getInstance().release(c, Reason.FORCE, true);
         	return;
         }
-        if(squadron.getDisplacement() + c.getOrigBlockCount() > SquadronsReloaded.SQUADMAXDISP + SquadronsReloaded.SQUADMAXDISPCARRIERMULT * squadron.getCarrier().getOrigBlockCount()) {
+        if(squadron.getDisplacement() + c.getOrigBlockCount() > SquadronsReloaded.SQUADMAXDISP + SquadronsReloaded.SQUADMAXDISPCARRIERMULT * carrierBlockCount) {
         	player.sendMessage(I18nSupport.getInternationalisedString("Squadrons - Too much displacement"));
         	CraftManager.getInstance().release(c, Reason.FORCE, true);
         	return;
@@ -58,7 +59,7 @@ public class CraftDetectListener implements Listener {
         if (squadron.getCarrier() != null) {
 			squadron.getCarrier().setHitBox(squadron.getCarrier().getHitBox().difference(c.getHitBox()));
 			if(SquadronsReloaded.BLOCKCOUNTOVERRIDE)
-				squadron.getCarrier().setOrigBlockCount(squadron.getCarrier().getOrigBlockCount()-c.getOrigBlockCount());
+				squadron.getCarrier().setOrigBlockCount(carrierBlockCount-c.getOrigBlockCount());
 		}
     	player.sendMessage(I18nSupport.getInternationalisedString(c.getType().getStringProperty(CraftType.NAME) + "(" + c.getHitBox().size() + ") added to squadron in position") + " " + position);
     }
