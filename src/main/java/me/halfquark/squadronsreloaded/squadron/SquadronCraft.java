@@ -91,7 +91,7 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 		Component notification = Component.empty();
 		if (isNew) {
-			notification = notification.append(I18nSupport.getInternationalisedComponent("Contact - New Contact").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+			notification = notification.append(I18nSupport.getInternationalisedComponent("Contact - Squadron New Contact").color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 		}
 		else {
 			notification = notification.append(I18nSupport.getInternationalisedComponent("Contact - Squadron"));
@@ -166,9 +166,9 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	public double getDetectionMultiplier(boolean underwater, MovecraftWorld movecraftWorld) {
 		NamespacedKey key = underwater ? CraftType.PER_WORLD_UNDERWATER_DETECTION_MULTIPLIER : CraftType.PER_WORLD_DETECTION_MULTIPLIER;
 		if (this.getSquadron().getLeadCraft() != null) {
-			return this.getSquadron().getLeadCraft().getType().getDoubleProperty(key);
+			return (double)this.getSquadron().getLeadCraft().getType().getPerWorldProperty(key, movecraftWorld);
 		} else {
-			return this.getType().getDoubleProperty(key);
+			return (double)this.getType().getPerWorldProperty(key, movecraftWorld);
 		}
 	}
 
@@ -267,6 +267,16 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 				return ((Integer)leadCraft.getType().getPerWorldProperty(CraftType.PER_WORLD_VERT_CRUISE_TICK_COOLDOWN, this.w) + chestPenalty) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 			}
 		}
+	}
+
+	final static List<UUID> EMPTY_CONTACT_LIST = new ArrayList<>();
+
+	@Override
+	public @NotNull List<UUID> getContactUUIDs(Craft self, @NotNull Set<Craft> candidates) {
+		if (this == this.getSquadron().getLeadCraft() || this.getSquadron().getLeadCraft() == null) {
+			return ContactProvider.super.getContactUUIDs(self, candidates);
+		}
+		return EMPTY_CONTACT_LIST;
 	}
 
 	@Override
