@@ -31,7 +31,7 @@ public class Squadron {
 	private CruiseDirection cruiseDirection;
 	private boolean pilotLocked;
 	private String name = "";
-	
+
 	public Squadron(Player p) {
 		pilot = p;
 		crafts = new ConcurrentHashMap<>();
@@ -65,7 +65,7 @@ public class Squadron {
 	public CruiseDirection getCruiseDirection() {return cruiseDirection;}
 
 	public String setName(String value) {
-		if (this.name == null) {
+		if (this.name == null || this.name.isBlank()) {
 			this.name = value;
 		}
 		return this.name;
