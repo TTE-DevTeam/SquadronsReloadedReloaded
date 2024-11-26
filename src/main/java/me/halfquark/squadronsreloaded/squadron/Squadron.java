@@ -30,6 +30,7 @@ public class Squadron {
 	private boolean cruising;
 	private CruiseDirection cruiseDirection;
 	private boolean pilotLocked;
+	// TODO: Migrate to use Components
 	private String name = "";
 
 	public Squadron(Player p) {

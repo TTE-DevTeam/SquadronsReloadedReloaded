@@ -160,6 +160,7 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 		if (this.getSquadron().getName() != null && !this.getSquadron().getName().isBlank()) {
 			craftTypeName = this.getSquadron().getName();
 		}
+		// TODO: Colored prefix for squadrons
 		if (craftTypeName.length() > 9)
 			craftTypeName = craftTypeName.substring(0, 7);
 
@@ -325,6 +326,10 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 	@Override
 	public @NotNull List<UUID> getContactUUIDs(Craft self, @NotNull Set<Craft> candidates) {
+		candidates.removeAll(this.getSquadron().getCrafts());
+		if (this.getSquadron().getCarrier() != null) {
+			candidates.remove(this.getSquadron().getCarrier());
+		}
 		if (this == this.getSquadron().getLeadCraft() || this.getSquadron().getLeadCraft() == null) {
 			return ContactProvider.super.getContactUUIDs(self, candidates);
 		}

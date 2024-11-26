@@ -50,6 +50,7 @@ public class CarrierSubcommand {
             return;
         }
         // TODO: Maybe change to distance squared
+        // TODO: This is deprecated and shall be removed!
         if (sq.getContacts().contains(carrier)) {
             // All good
         } else {
