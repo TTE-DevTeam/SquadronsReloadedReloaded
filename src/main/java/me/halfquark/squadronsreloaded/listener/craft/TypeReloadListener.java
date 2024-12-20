@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 
 public class TypeReloadListener implements Listener {
 
-    @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
+    @EventHandler(ignoreCancelled = false, priority = EventPriority.HIGH)
     public void onCraftTypeReload(final TypesReloadedEvent event) {
         MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
     }
