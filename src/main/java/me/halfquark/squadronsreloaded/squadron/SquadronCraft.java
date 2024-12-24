@@ -326,6 +326,9 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 	@Override
 	public @NotNull List<UUID> getContactUUIDs(Craft self, @NotNull Set<Craft> candidates) {
+		if (this.getSquadron() == null || this.getSquadron().getCrafts() == null || candidates == null) {
+			return EMPTY_CONTACT_LIST;
+		}
 		candidates.removeAll(this.getSquadron().getCrafts());
 		if (this.getSquadron().getCarrier() != null) {
 			candidates.remove(this.getSquadron().getCarrier());
