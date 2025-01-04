@@ -1,17 +1,15 @@
 package me.halfquark.squadronsreloaded.squadron;
 
-import javax.annotation.Nonnull;
-
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.*;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.exception.EmptyHitBoxException;
 import net.countercraft.movecraft.features.contacts.ContactProvider;
 import net.countercraft.movecraft.features.contacts.ContactsManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.processing.MovecraftWorld;
-import net.countercraft.movecraft.sign.AbstractInformationSign;
 import net.countercraft.movecraft.util.Counter;
 import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.util.TimingData;
@@ -27,16 +25,18 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-
-import net.countercraft.movecraft.craft.type.CraftType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, ContactProvider {
 	
-	private Player pilot;
+	private UUID pilotUUID;
+	private WeakReference<Player> pilot;
 	private Squadron squadron;
 
 	@NotNull
@@ -44,7 +44,8 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	
 	public SquadronCraft(@Nonnull CraftType type, @Nonnull World world, @Nonnull Player p, @Nonnull Squadron sq) {
 		super(type, world);
-		pilot = p;
+		pilotUUID = p.getUniqueId();
+		pilot = new WeakReference<>(p);
 		squadron = sq;
 	}
 
@@ -58,8 +59,14 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	public void setParent(@NotNull Craft parent) {
 		return;
 	}
-	
-	public Player getSquadronPilot() {return pilot;}
+
+	@Nullable
+	public Player getSquadronPilot() {
+		if (this.pilot.get() == null) {
+			this.pilot = new WeakReference<> (Bukkit.getPlayer(this.getPilotUUID()));
+		}
+		return this.pilot.get();
+	}
 	public Squadron getSquadron() {return squadron;}
 	
 	public boolean isLead() {
@@ -71,11 +78,13 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 		if (this.getSquadron().getPilot() != null) {
 			return this.getSquadron().getPilot();
 		}
-		return this.pilot;
+		return this.getSquadronPilot();
 	}
 
-
-
+	@Override
+	public @NotNull UUID getPilotUUID() {
+		return this.pilotUUID;
+	}
 
 
 	@Override

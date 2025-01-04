@@ -3,6 +3,7 @@ package me.halfquark.squadronsreloaded.squadron;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,7 +17,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 public class SquadronManager {
 
 	private static SquadronManager inst;
-	private static ConcurrentMap<Player, Squadron> squads;
+	private static ConcurrentMap<UUID, Squadron> squads;
 	
 	public static void initialize() {
 		inst = new SquadronManager();
@@ -28,9 +29,9 @@ public class SquadronManager {
 	
 	public static SquadronManager getInstance() {return inst;}
 	
-	public void putSquadron(Player p, Squadron s) {squads.put(p, s);}
+	public void putSquadron(Player p, Squadron s) {squads.put(p.getUniqueId(), s);}
 	public void removeSquadron(Player p) {
-		Squadron sq = squads.remove(p);
+		Squadron sq = squads.remove(p.getUniqueId());
 		if (sq != null && sq.getCarrier() != null) {
 			sq.getCarrier().getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).remove(sq);
 		}
@@ -42,9 +43,9 @@ public class SquadronManager {
 		squads.entrySet().removeIf(entry -> entry.getValue().equals(sq));
 	}
 	public boolean hasSquadron(Player p) {
-		if(!squads.containsKey(p))
+		if(!squads.containsKey(p.getUniqueId()))
 			return false;
-		Squadron sq = squads.get(p);
+		Squadron sq = squads.get(p.getUniqueId());
 		if(sq == null) {
 			return false;
 		}
@@ -63,9 +64,9 @@ public class SquadronManager {
 	@Nullable
 	public Squadron getPlayerSquadron(Player p, boolean check) {
 		if(!check)
-			return squads.get(p);
+			return squads.get(p.getUniqueId());
 		if(hasSquadron(p))
-			return squads.get(p);
+			return squads.get(p.getUniqueId());
 		return null;
 	}
 	
@@ -75,7 +76,7 @@ public class SquadronManager {
 
 	public List<Squadron> getSquadronList() {
 		ArrayList<Squadron> squadList = new ArrayList<>();
-		for(Map.Entry<Player, Squadron> entry : squads.entrySet()) {
+		for(Map.Entry<UUID, Squadron> entry : squads.entrySet()) {
 			squadList.add(entry.getValue());
 		}
 		return squadList;
