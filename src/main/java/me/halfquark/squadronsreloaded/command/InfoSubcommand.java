@@ -63,7 +63,7 @@ public class InfoSubcommand {
 		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Squadron Name:" + sq.getName()));
 		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Pilot:" + sq.getPilot().getName()));
 		if (sq.getCarrier() != null) {
-			sender.sendMessage(">" + I18nSupport.getInternationalisedString("Carrier:" + ((sq.getCarrier().getName() != "")?sq.getCarrier().getName():sq.getCarrier().getType().getStringProperty(CraftType.NAME))));
+			sender.sendMessage(">" + I18nSupport.getInternationalisedString("Carrier:" + ((sq.getCarrier().getName().toString() != "")?sq.getCarrier().getName():sq.getCarrier().getType().getStringProperty(CraftType.NAME))));
 		}
 		sender.sendMessage(">" + I18nSupport.getInternationalisedString("Crafts:"));
 		List<Entry<SquadronCraft, Integer>> sortedCrafts = new ArrayList<>(sq.getCraftMap().entrySet());
@@ -75,7 +75,7 @@ public class InfoSubcommand {
 			        }
 			    });
 		for(Entry<SquadronCraft, Integer> entry : sortedCrafts)
-			sender.sendMessage(" " + entry.getValue() + ":" + ((entry.getKey().getName() != "")?entry.getKey().getName():entry.getKey().getType().getStringProperty(CraftType.NAME)) + "(" + entry.getKey().getHitBox().size() + ")");
+			sender.sendMessage(" " + entry.getValue() + ":" + ((entry.getKey().getName().toString() != "")?entry.getKey().getName():entry.getKey().getType().getStringProperty(CraftType.NAME)) + "(" + entry.getKey().getHitBox().size() + ")");
 
 	}
 	
