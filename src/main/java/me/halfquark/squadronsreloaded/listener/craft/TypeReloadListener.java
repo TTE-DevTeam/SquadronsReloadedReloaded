@@ -12,7 +12,7 @@ public class TypeReloadListener implements Listener {
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.HIGH)
     public void onCraftTypeReload(final TypesReloadedEvent event) {
-        MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
+        MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getTypesafeCraftTypes(), SRCraftPilotSign::new);
     }
 
 }

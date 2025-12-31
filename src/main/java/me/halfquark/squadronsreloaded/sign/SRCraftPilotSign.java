@@ -9,6 +9,8 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.PropertyKeys;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.processing.functions.Result;
 import net.countercraft.movecraft.sign.CraftPilotSign;
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
 
-    public SRCraftPilotSign(CraftType craftType) {
+    public SRCraftPilotSign(TypeSafeCraftType craftType) {
         super(craftType);
     }
 
@@ -31,7 +33,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
     protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Player player, @Nullable Craft craft) {
         if (clickType.isRightClick()) {
             if (!player.isSneaking() && (craft instanceof SquadronCraft squadronCraft)) {
-                if (this.craftType.getBoolProperty(CraftType.CRUISE_ON_PILOT)) {
+                if (this.craftType.get(PropertyKeys.CRUISE_ON_PILOT)) {
                     // TODO: Add whitelist or blacklist for synched launches
                     this.findMatchingSignsInSquadronPerCraft(squadronCraft.getSquadron(), sign, squadronCraft).forEach(
                             (squadronCraftTmp, signs) -> {
@@ -56,7 +58,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                 return false;
             }
 
-            if (!SquadronsReloaded.CARRIEDTYPES.contains(this.craftType.getStringProperty(CraftType.NAME))) {
+            if (!SquadronsReloaded.CARRIEDTYPES.contains(this.craftType.getName().toUpperCase())) {
                 player.sendMessage(I18nSupport.getInternationalisedComponent("This crafttype is not supported as squadron!"));
                 return false;
             }
@@ -82,7 +84,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                 player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Must pilot a carrier"));
                 return false;
             } else if (playerCraft != null) {
-                if (!SquadronsReloaded.CARRIERTYPES.contains(playerCraft.getType().getStringProperty(CraftType.NAME))) {
+                if (!SquadronsReloaded.CARRIERTYPES.contains(playerCraft.getCraftProperties().getName().toUpperCase())) {
                     player.sendMessage(I18nSupport.getInternationalisedComponent("Squadrons - Piloted craft is not a carrier type"));
                     return false;
                 }

@@ -66,7 +66,7 @@ public class CraftDetectListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onCraftTypesReload(TypesReloadedEvent event) {
-        MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
+        MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getTypesafeCraftTypes(), SRCraftPilotSign::new);
     }
 	
 }

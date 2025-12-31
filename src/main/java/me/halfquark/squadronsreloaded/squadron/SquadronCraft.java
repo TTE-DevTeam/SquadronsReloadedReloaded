@@ -4,7 +4,8 @@ import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.*;
-import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.*;
+import net.countercraft.movecraft.craft.type.property.BlockSetProperty;
 import net.countercraft.movecraft.exception.EmptyHitBoxException;
 import net.countercraft.movecraft.features.contacts.ContactProvider;
 import net.countercraft.movecraft.features.contacts.ContactsManager;
@@ -24,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +44,7 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	@NotNull
 	TimingData stats = new TimingData();
 	
-	public SquadronCraft(@Nonnull CraftType type, @Nonnull World world, @Nonnull Player p, @Nonnull Squadron sq) {
+	public SquadronCraft(@Nonnull TypeSafeCraftType type, @Nonnull World world, @Nonnull Player p, @Nonnull Squadron sq) {
 		super(type, world);
 		pilotUUID = p.getUniqueId();
 		pilot = new WeakReference<>(p);
@@ -118,7 +120,7 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 		if (sqName != null && !sqName.isBlank()) {
 			name = name.append(Component.text(sqName));
 		} else {
-			name = name.append(Component.text(this.getType().getStringProperty(CraftType.NAME)));
+			name = name.append(Component.text(this.getCraftProperties().getName()));
 		}
 
 		// TODO: Team colors!
@@ -224,12 +226,12 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 	@Override
 	public double getDetectionMultiplier(boolean underwater, MovecraftWorld movecraftWorld) {
-		NamespacedKey key = underwater ? CraftType.PER_WORLD_UNDERWATER_DETECTION_MULTIPLIER : CraftType.PER_WORLD_DETECTION_MULTIPLIER;
+		PropertyKey<PerWorldData<Double>> key = underwater ? PropertyKeys.UNDERWATER_DETECTION_MULTIPLIER : PropertyKeys.DETECTION_MULTIPLIER;
 		double sum = 0;
 		int counter = 0;
 		for (SquadronCraft sc : this.getSquadron().getCrafts()) {
 			counter++;
-			sum += (double)sc.getType().getPerWorldProperty(key, movecraftWorld);
+			sum += sc.getCraftProperties().get(key, movecraftWorld);
 		}
 		return sum / ((double)counter);
 	}
@@ -251,26 +253,26 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 
 
 		if (this instanceof SinkingCraft) {
-			return this.type.getIntProperty(CraftType.SINK_RATE_TICKS);
+			return this.getCraftProperties().get(PropertyKeys.SINK_RATE_TICKS);
 		} else {
-			Counter<Material> materials = (Counter)this.getDataTag(Craft.MATERIALS);
+			Counter<NamespacedKey> materials = (Counter)this.getDataTag(Craft.BLOCKS);
 			int chestPenalty = 0;
 			Material m;
 			if (!materials.isEmpty()) {
-				for(Iterator var3 = Tags.CHESTS.iterator(); var3.hasNext(); chestPenalty += materials.get(m)) {
+				for(Iterator var3 = Tags.CHESTS.iterator(); var3.hasNext(); chestPenalty += materials.get(m.getKey())) {
 					m = (Material)var3.next();
 				}
 			}
 
-			chestPenalty *= (int)this.type.getDoubleProperty(CraftType.CHEST_PENALTY);
+			chestPenalty *= this.getCraftProperties().get(PropertyKeys.CHEST_PENALTY);
 			if (!this.getCruising()) {
-				return ((Integer)this.type.getPerWorldProperty(CraftType.PER_WORLD_TICK_COOLDOWN, this.w) + chestPenalty) * (this.type.getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
+				return (this.getCraftProperties().get(PropertyKeys.TICK_COOLDOWN, this.w) + chestPenalty) * (this.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 			} else if (this.getCruiseDirection() != CruiseDirection.UP && this.getCruiseDirection() != CruiseDirection.DOWN) {
-				int cruiseTickCooldown = (Integer)this.type.getPerWorldProperty(CraftType.PER_WORLD_CRUISE_TICK_COOLDOWN, this.w);
+				int cruiseTickCooldown = this.getCraftProperties().get(PropertyKeys.CRUISE_TICK_COOLDOWN, this.w);
 				double count;
-				if (leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_FLY_BLOCK_SPEED_FACTOR) == 0.0) {
-					if (leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_SPEED_FACTOR) != 0.0 && leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_POWER_FACTOR) != 0.0 && !(Math.abs(leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_POWER_FACTOR)) > 1.0)) {
-						int cruiseSkipBlocks = (Integer)this.type.getPerWorldProperty(CraftType.PER_WORLD_CRUISE_SKIP_BLOCKS, this.w);
+				if (leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_FLY_BLOCK_SPEED_FACTOR) == 0.0) {
+					if (leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_SPEED_FACTOR) != 0.0 && leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_POWER_FACTOR) != 0.0 && !(Math.abs(leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_POWER_FACTOR)) > 1.0)) {
+						int cruiseSkipBlocks = this.getCraftProperties().get(PropertyKeys.CRUISE_SKIP_BLOCKS, this.w);
 						Logger var10000;
 						double var10001;
 						if (this.stats.getCount() == 0) {
@@ -278,55 +280,55 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 								Bukkit.getLogger().info("First cruise: ");
 								Bukkit.getLogger().info("\t- Skip: " + cruiseSkipBlocks);
 								Bukkit.getLogger().info("\t- Tick: " + cruiseTickCooldown);
-								Bukkit.getLogger().info("\t- MinSpeed: " + leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_MIN_SPEED));
+								Bukkit.getLogger().info("\t- MinSpeed: " + leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_MIN_SPEED));
 								var10000 = Bukkit.getLogger();
-								int var15 = this.type.getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1;
+								int var15 = this.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1;
 								var10000.info("\t- Gearshifts: " + var15);
 								var10000 = Bukkit.getLogger();
-								var10001 = 20.0 * (((double)cruiseSkipBlocks + 1.0) / leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_MIN_SPEED));
-								int var10002 = this.type.getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1;
+								var10001 = 20.0 * (((double)cruiseSkipBlocks + 1.0) / leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_MIN_SPEED));
+								int var10002 = this.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1;
 								var10000.info("\t- Cooldown: " + (int)Math.round(var10001 * (double)var10002));
 							}
 
-							return (int)Math.round(20.0 * (((double)cruiseSkipBlocks + 1.0) / leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_MIN_SPEED)) * (double)(leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1));
+							return (int)Math.round(20.0 * (((double)cruiseSkipBlocks + 1.0) / leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_MIN_SPEED)) * (double)(leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1));
 						} else {
 							if (Settings.Debug) {
 								Bukkit.getLogger().info("Cruise: ");
 								Bukkit.getLogger().info("\t- Skip: " + cruiseSkipBlocks);
 								Bukkit.getLogger().info("\t- Tick: " + cruiseTickCooldown);
-								Bukkit.getLogger().info("\t- SpeedFactor: " + leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_SPEED_FACTOR));
-								Bukkit.getLogger().info("\t- PowerFactor: " + leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_POWER_FACTOR));
-								Bukkit.getLogger().info("\t- MinSpeed: " + leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_MIN_SPEED));
+								Bukkit.getLogger().info("\t- SpeedFactor: " + leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_SPEED_FACTOR));
+								Bukkit.getLogger().info("\t- PowerFactor: " + leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_POWER_FACTOR));
+								Bukkit.getLogger().info("\t- MinSpeed: " + leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_MIN_SPEED));
 								var10000 = Bukkit.getLogger();
 								var10001 = this.getMeanCruiseTime();
 								var10000.info("\t- CruiseTime: " + var10001 * 1000.0 + "ms");
 							}
 
 							count = 20.0 * ((double)cruiseSkipBlocks + 1.0) / (double)((float)cruiseTickCooldown);
-							count -= leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_SPEED_FACTOR) * Math.pow(this.getMeanCruiseTime() * 1000.0, leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_POWER_FACTOR));
-							count = Math.max(leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_LAG_MIN_SPEED), count);
-							return (int)Math.round(20.0 * ((double)cruiseSkipBlocks + 1.0) / count) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
+							count -= leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_SPEED_FACTOR) * Math.pow(this.getMeanCruiseTime() * 1000.0, leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_POWER_FACTOR));
+							count = Math.max(leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_LAG_MIN_SPEED), count);
+							return (int)Math.round(20.0 * ((double)cruiseSkipBlocks + 1.0) / count) * (leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 						}
 					} else {
-						return (cruiseTickCooldown + chestPenalty) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
+						return (cruiseTickCooldown + chestPenalty) * (leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 					}
 				} else if (materials.isEmpty()) {
-					return ((Integer)leadCraft.getType().getPerWorldProperty(CraftType.PER_WORLD_TICK_COOLDOWN, this.w) + chestPenalty) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
+					return (leadCraft.getCraftProperties().get(PropertyKeys.TICK_COOLDOWN, this.w) + chestPenalty) * (leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 				} else {
-					EnumSet<Material> flyBlockMaterials = this.type.getMaterialSetProperty(CraftType.DYNAMIC_FLY_BLOCK);
+					BlockSetProperty flyBlockMaterials = this.getCraftProperties().get(PropertyKeys.DYNAMIC_FLY_BLOCKS);
 					count = 0.0;
 
-					Material m2;
-					for(Iterator var7 = flyBlockMaterials.iterator(); var7.hasNext(); count += (double)materials.get(m2)) {
-						m2 = (Material)var7.next();
+					NamespacedKey m2;
+					for(Iterator<NamespacedKey> var7 = flyBlockMaterials.iterator(); var7.hasNext(); count += (double)materials.get(m2)) {
+						m2 = var7.next();
 					}
 
 					double ratio = count / (double)this.hitBox.size();
-					double speed = leadCraft.getType().getDoubleProperty(CraftType.DYNAMIC_FLY_BLOCK_SPEED_FACTOR) * 1.5 * (ratio - 0.5) + 20.0 / (double)cruiseTickCooldown + 1.0;
-					return Math.max((int)Math.round(20.0 * (double)((Integer)leadCraft.getType().getPerWorldProperty(CraftType.PER_WORLD_CRUISE_SKIP_BLOCKS, this.w) + 1) / speed) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1), 1);
+					double speed = leadCraft.getCraftProperties().get(PropertyKeys.DYNAMIC_FLY_BLOCK_SPEED_FACTOR) * 1.5 * (ratio - 0.5) + 20.0 / (double)cruiseTickCooldown + 1.0;
+					return Math.max((int)Math.round(20.0 * (double)(leadCraft.getCraftProperties().get(PropertyKeys.CRUISE_SKIP_BLOCKS, this.w) + 1) / speed) * (leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1), 1);
 				}
 			} else {
-				return ((Integer)leadCraft.getType().getPerWorldProperty(CraftType.PER_WORLD_VERT_CRUISE_TICK_COOLDOWN, this.w) + chestPenalty) * (leadCraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
+				return (leadCraft.getCraftProperties().get(PropertyKeys.VERT_CRUISE_TICK_COOLDOWN, this.w) + chestPenalty) * (leadCraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_TICK_COOLDOWN) ? this.getCurrentGear() : 1);
 			}
 		}
 	}
@@ -358,4 +360,9 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 		stats.accept(cruiseTime);
 	}
 
+	@Override
+	public void removeUUIDMarkFromTile(TileState tile) {
+		// TODO: Properly implement to respect the "effective" parent
+		SubCraft.super.removeUUIDMarkFromTile(tile);
+	}
 }

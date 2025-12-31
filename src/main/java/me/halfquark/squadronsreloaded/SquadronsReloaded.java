@@ -74,7 +74,10 @@ public class SquadronsReloaded extends JavaPlugin {
 		
 		FORMATIONFOLDER = new File(SquadronsReloaded.inst.getDataFolder(), File.separator + "formations");
 		CARRIERTYPES = getConfig().getStringList("carrierTypes");
-		CARRIEDTYPES = getConfig().getStringList("carriedTypes");
+		CARRIEDTYPES = new ArrayList<>();
+		for (String s : getConfig().getStringList("carriedTypes")) {
+			CARRIEDTYPES.add(s.toUpperCase().trim());
+		}
 		NEEDSCARRIER = getConfig().getBoolean("needsCarrier");
 		MANOVERBOARDTIME = getConfig().getInt("manoverboardTime");
 		TPTONEWLEAD = getConfig().getBoolean("tpToNewLead");
@@ -120,7 +123,7 @@ public class SquadronsReloaded extends JavaPlugin {
 		MovecraftSignRegistry.INSTANCE.register("Remote Sign", new SRRemoteSign(), true, "Remote");
 		// TODO: Suppress the subcraft rotate sign from rotating to other squadron members when called by a remote!
 		// MovecraftSignRegistry.INSTANCE.register("Subcraft Rotate", new SRSubcraftRotateSign(CraftManager.getInstance()::getCraftTypeFromString, Movecraft::getInstance)), true);
-		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getCraftTypes(), SRCraftPilotSign::new);
+		MovecraftSignRegistry.INSTANCE.registerCraftPilotSigns(CraftManager.getInstance().getTypesafeCraftTypes(), SRCraftPilotSign::new);
 		MovecraftSignRegistry.INSTANCE.register("Squadron Name:", new SquadronNameSign(), "SName:");
 		MovecraftSignRegistry.INSTANCE.register("Squadron Remote", new SRCarrierCommandSign(), "SRemote");
 

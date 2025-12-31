@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.halfquark.squadronsreloaded.formation.Formation;
-import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -274,10 +273,10 @@ public class Squadron {
     public String toString() {
         String out = "[Squadron]Pilot:" + this.getPilot() != null ? this.getPilot().getName() : this.getPilotUUID().toString();
         if (carrier != null)
-            out += ",Carrier:" + carrier.getType().getStringProperty(CraftType.NAME) + "(" + carrier.getHitBox().size() + ")";
+            out += ",Carrier:" + carrier.getCraftProperties().getName() + "(" + carrier.getHitBox().size() + ")";
         for (Map.Entry<SquadronCraft, Integer> mapEntry : crafts.entrySet()) {
             out += "," + String.valueOf(mapEntry.getValue()) + ":";
-            out += mapEntry.getKey().getType().getStringProperty(CraftType.NAME);
+            out += mapEntry.getKey().getCraftProperties().getName();
             out += "(" + mapEntry.getKey().getHitBox().size() + ")";
         }
         return out;

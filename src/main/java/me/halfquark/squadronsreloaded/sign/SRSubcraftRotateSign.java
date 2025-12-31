@@ -4,6 +4,7 @@ import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.sign.SubcraftRotateSign;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
 
 public class SRSubcraftRotateSign extends SubcraftRotateSign implements ISquadronSign {
 
-    public SRSubcraftRotateSign(Function<String, @Nullable CraftType> craftTypeRetrievalFunction, Supplier<Plugin> plugin) {
+    public SRSubcraftRotateSign(Function<String, @Nullable TypeSafeCraftType> craftTypeRetrievalFunction, Supplier<Plugin> plugin) {
         super(craftTypeRetrievalFunction, plugin);
     }
 

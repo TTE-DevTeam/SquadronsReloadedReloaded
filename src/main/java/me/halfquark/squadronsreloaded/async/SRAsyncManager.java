@@ -3,8 +3,7 @@ package me.halfquark.squadronsreloaded.async;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.countercraft.movecraft.craft.type.PropertyKeys;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -14,7 +13,6 @@ import me.halfquark.squadronsreloaded.move.CraftRotateManager;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
-import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -62,7 +60,7 @@ public class SRAsyncManager extends BukkitRunnable {
 	            World w = pcraft.getWorld();
 	            // if the craft should go slower underwater, make
 	            // time pass more slowly there
-	            if (pcraft.getType().getBoolProperty(CraftType.HALF_SPEED_UNDERWATER) && pcraft.getHitBox().getMinY() < w.getSeaLevel())
+	            if (pcraft.getCraftProperties().get(PropertyKeys.HALF_SPEED_UNDERWATER) && pcraft.getHitBox().getMinY() < w.getSeaLevel())
 	                ticksElapsed >>= 1;
 	            int tickCoolDown;
 	            if(cooldownCache.containsKey(pcraft)){
@@ -77,7 +75,7 @@ public class SRAsyncManager extends BukkitRunnable {
 	                cooldownCache.put(pcraft,tickCoolDown);
 	            }
 	            // Account for banking and diving in speed calculations by changing the tickCoolDown
-				int cruiseSkipBlocks = (int) pcraft.getType().getPerWorldProperty(CraftType.PER_WORLD_CRUISE_SKIP_BLOCKS, w);
+				int cruiseSkipBlocks = pcraft.getCraftProperties().get(PropertyKeys.CRUISE_SKIP_BLOCKS, w);
 	            if(sq.getCruiseDirection() != CruiseDirection.UP && sq.getCruiseDirection() != CruiseDirection.DOWN) {
 	                if (bankLeft || bankRight) {
 	                    if (!dive) {
@@ -96,7 +94,7 @@ public class SRAsyncManager extends BukkitRunnable {
 	            int dx = 0;
 	            int dz = 0;
 	            int dy = 0;
-				int vertCruiseSkipBlocks = (int) pcraft.getType().getPerWorldProperty(CraftType.PER_WORLD_VERT_CRUISE_SKIP_BLOCKS, pcraft.getWorld());
+				int vertCruiseSkipBlocks = pcraft.getCraftProperties().get(PropertyKeys.VERT_CRUISE_SKIP_BLOCKS, pcraft.getWorld());
 	            // ascend
 	            if (sq.getCruiseDirection() == CruiseDirection.UP) {
 	                dy = 1 + vertCruiseSkipBlocks;
@@ -153,10 +151,10 @@ public class SRAsyncManager extends BukkitRunnable {
 	                    dx = (1 + cruiseSkipBlocks) >> 1;
 	                }
 	            }
-				if (pcraft.getType().getBoolProperty(CraftType.CRUISE_ON_PILOT)) {
-					dy = pcraft.getType().getIntProperty(CraftType.CRUISE_ON_PILOT_VERT_MOVE);
+				if (pcraft.getCraftProperties().get(PropertyKeys.CRUISE_ON_PILOT)) {
+					dy = pcraft.getCraftProperties().get(PropertyKeys.CRUISE_ON_PILOT_VERT_MOVE);
 				}
-				if (pcraft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_CRUISE_SKIP_BLOCKS)) {
+				if (pcraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_AFFECT_CRUISE_SKIP_BLOCKS)) {
 					final int gearshift = pcraft.getCurrentGear();
 					dx *= gearshift;
 					dy *= gearshift;

@@ -120,6 +120,8 @@ public class CraftReleaseListener implements Listener {
 		if (checkCraftBorders(carrier, squadronCraft)) {
 			carrier.setHitBox(carrier.getHitBox().union(squadronCraft.getHitBox()));
 		}
+
+		// TODO: Mark the relevant tiles!
 	}
 
 	private static boolean checkCraftBorders(Craft carrierCraft, SquadronCraft squadronCraft) {
