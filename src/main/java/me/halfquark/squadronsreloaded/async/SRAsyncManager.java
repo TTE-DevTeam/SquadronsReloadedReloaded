@@ -154,7 +154,7 @@ public class SRAsyncManager extends BukkitRunnable {
 				if (pcraft.getCraftProperties().get(PropertyKeys.CRUISE_ON_PILOT)) {
 					dy = pcraft.getCraftProperties().get(PropertyKeys.CRUISE_ON_PILOT_VERT_MOVE);
 				}
-				if (pcraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_AFFECT_CRUISE_SKIP_BLOCKS)) {
+				if (pcraft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_CRUISE_SKIP_BLOCKS)) {
 					final int gearshift = pcraft.getCurrentGear();
 					dx *= gearshift;
 					dy *= gearshift;
