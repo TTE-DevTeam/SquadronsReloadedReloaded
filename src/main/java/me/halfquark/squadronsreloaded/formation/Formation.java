@@ -9,7 +9,10 @@ import javax.annotation.Nullable;
 
 import me.halfquark.squadronsreloaded.SquadronsReloaded;
 import me.halfquark.squadronsreloaded.config.Config;
+import me.halfquark.squadronsreloaded.utils.MathParser;
+import me.halfquark.squadronsreloaded.utils.MathUtils;
 import net.countercraft.movecraft.CruiseDirection;
+import org.bukkit.block.BlockFace;
 
 public class Formation extends Config {
 	
@@ -81,26 +84,12 @@ public class Formation extends Config {
 			return null;
 		return positionMap.get(cd).getZPosition(n, spacing);
 	}
-	
+
+	static final BlockFace[] FACES = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
 	@Nullable
 	private String cruiseDirToString(CruiseDirection cd) {
-		switch(cd) {
-		case NORTH:
-			return "NORTH";
-		case EAST:
-			return "EAST";
-		case SOUTH:
-			return "SOUTH";
-		case WEST:
-			return "WEST";
-		case UP:
-			return "UP";
-		case DOWN:
-			return "DOWN";
-		case NONE:
-			return "NONE";
-		}
-		return null;
+		BlockFace nearest = MathUtils.getClosestFace(cd, FACES);
+		return nearest.name();
 	}
 	
 	@Nullable
