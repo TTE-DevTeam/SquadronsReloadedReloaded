@@ -72,6 +72,9 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	public Squadron getSquadron() {return squadron;}
 	
 	public boolean isLead() {
+		if (squadorn.getLeadCraft() == null) {
+			return false;
+		}
 		return squadron.getLeadCraft().equals(this);
 	}
 
@@ -366,3 +369,4 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 		SubCraft.super.removeUUIDMarkFromTile(tile);
 	}
 }
+
