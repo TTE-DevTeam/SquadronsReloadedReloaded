@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${paper_version}")
-    implementation "TTE-DevTeam:Movecraft:${mc_version_movecraft_tte}-${movecraft_tte_version}@jar"
+    implementation "TTE-DevTeam:Windfarer:${mc_version_movecraft_tte}-${movecraft_tte_version}@jar"
 }
 
 def targetJavaVersion = 21
