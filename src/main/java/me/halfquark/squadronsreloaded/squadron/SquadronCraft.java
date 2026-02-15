@@ -72,7 +72,7 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	public Squadron getSquadron() {return squadron;}
 	
 	public boolean isLead() {
-		if (squadorn.getLeadCraft() == null) {
+		if (squadron.getLeadCraft() == null) {
 			return false;
 		}
 		return squadron.getLeadCraft().equals(this);
