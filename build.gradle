@@ -33,7 +33,7 @@ dependencies {
     implementation "TTE-DevTeam:Windfarer:${mc_version_movecraft_tte}-${movecraft_tte_version}@jar"
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
