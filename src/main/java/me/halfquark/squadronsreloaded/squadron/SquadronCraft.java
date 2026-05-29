@@ -26,6 +26,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.TileState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,19 +36,15 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, ContactProvider {
+public class SquadronCraft extends PilotedCraftImpl implements SubCraft, PilotedCraft, ContactProvider {
 	
-	private UUID pilotUUID;
-	private WeakReference<Player> pilot;
 	private Squadron squadron;
 
 	@NotNull
 	TimingData stats = new TimingData();
 	
-	public SquadronCraft(@Nonnull TypeSafeCraftType type, @Nonnull World world, @Nonnull Player p, @Nonnull Squadron sq) {
-		super(type, world);
-		pilotUUID = p.getUniqueId();
-		pilot = new WeakReference<>(p);
+	public SquadronCraft(@Nonnull TypeSafeCraftType type, @Nonnull World world, @Nonnull Entity p, @Nonnull Squadron sq) {
+		super(type, world, p);
 		squadron = sq;
 	}
 
@@ -63,11 +60,8 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	}
 
 	@Nullable
-	public Player getSquadronPilot() {
-		if (this.pilot.get() == null) {
-			this.pilot = new WeakReference<> (Bukkit.getPlayer(this.getPilotUUID()));
-		}
-		return this.pilot.get();
+	public Entity getSquadronPilot() {
+		return this.getPilotEntity();
 	}
 	public Squadron getSquadron() {return squadron;}
 	
@@ -79,18 +73,12 @@ public class SquadronCraft extends BaseCraft implements SubCraft, PilotedCraft, 
 	}
 
 	@Override
-	public @NotNull Player getPilot() {
+	public @NotNull Entity getPilotEntity() {
 		if (this.getSquadron().getPilot() != null) {
 			return this.getSquadron().getPilot();
 		}
 		return this.getSquadronPilot();
 	}
-
-	@Override
-	public @NotNull UUID getPilotUUID() {
-		return this.pilotUUID;
-	}
-
 
 	@Override
 	public Component getDetectedMessage(boolean isNew, Craft craft) {

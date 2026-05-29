@@ -7,6 +7,7 @@ import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.sign.SubcraftRotateSign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.plugin.Plugin;
@@ -22,12 +23,12 @@ public class SRSubcraftRotateSign extends SubcraftRotateSign implements ISquadro
     }
 
     @Override
-    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+    protected boolean canPlayerUseSignOn(Entity player, @Nullable Craft craft) {
         return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
     }
 
     @Override
-    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, @Nullable Craft craft, Player player) {
+    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, @Nullable Craft craft, Entity player) {
         if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron squadron = sc.getSquadron();
             this.findMatchingSignsInSquadronPerCraft(squadron, sign, null).forEach((c, s) -> {

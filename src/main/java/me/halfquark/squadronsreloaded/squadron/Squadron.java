@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import me.halfquark.squadronsreloaded.formation.Formation;
@@ -22,7 +23,7 @@ import net.countercraft.movecraft.events.CraftReleaseEvent.Reason;
 public class Squadron {
 
     private UUID pilotUUID;
-    private WeakReference<Player> pilot;
+    private WeakReference<Entity> pilot;
     private ConcurrentMap<SquadronCraft, Integer> crafts;
     private PlayerCraft carrier;
     private int nextId;
@@ -35,9 +36,9 @@ public class Squadron {
     // TODO: Migrate to use Components
     private String name = "";
 
-    public Squadron(Player p) {
-        pilot = new WeakReference<>(p);
-        this.pilotUUID = p.getUniqueId();
+    public Squadron(Entity entity) {
+        pilot = new WeakReference<>(entity);
+        this.pilotUUID = entity.getUniqueId();
         crafts = new ConcurrentHashMap<>();
         nextId = 0;
         formation = null;
@@ -59,11 +60,21 @@ public class Squadron {
     }
 
     @Nullable
-    public Player getPilot() {
+    public Entity getPilot() {
         if (this.pilot.get() == null) {
             this.pilot = new WeakReference<>(Bukkit.getPlayer(this.getPilotUUID()));
         }
         return this.pilot.get();
+    }
+
+    @Nullable
+    public Player getPilotPlayer() {
+        Entity pilotEntity = this.getPilot();
+        if (pilotEntity != null && pilotEntity instanceof Player player) {
+            return player;
+        } else {
+            return null;
+        }
     }
 
     public ConcurrentMap<SquadronCraft, Integer> getCraftMap() {

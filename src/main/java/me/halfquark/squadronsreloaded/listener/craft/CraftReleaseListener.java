@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -66,7 +66,7 @@ public class CraftReleaseListener implements Listener {
 				return;
 			}*/
 		}
-		Player p = craft.getSquadronPilot();
+        Entity p = craft.getSquadronPilot();
 		if(p == null)
 			return;
 		if(sq.hasCraft(e.getCraft())) {

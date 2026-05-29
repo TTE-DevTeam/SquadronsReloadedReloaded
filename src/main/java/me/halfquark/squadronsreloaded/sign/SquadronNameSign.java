@@ -8,7 +8,7 @@ import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.sign.AbstractCraftSign;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.ChatUtils;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 
@@ -24,26 +24,26 @@ public class SquadronNameSign extends AbstractCraftSign {
         super(NAME_SIGN_PERMISSION, true);
     }
 
-    protected boolean canPlayerUseSign(Action clickType, SignListener.SignWrapper sign, Player player) {
+    protected boolean canPlayerUseSign(Action clickType, SignListener.SignWrapper sign, Entity player) {
         return !Settings.RequireNamePerm || super.canPlayerUseSign(clickType, sign, player);
     }
 
-    protected boolean isSignValid(Action clickType, SignListener.SignWrapper sign, Player player) {
+    protected boolean isSignValid(Action clickType, SignListener.SignWrapper sign, Entity player) {
         return true;
     }
 
-    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
+    protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Entity player) {
         return true;
     }
 
-    protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Player player, @Nullable Craft craft) {
+    protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Entity player, @Nullable Craft craft) {
         return true;
     }
 
-    protected void onCraftIsBusy(Player player, Craft craft) {
+    protected void onCraftIsBusy(Entity player, Craft craft) {
     }
 
-    protected void onCraftNotFound(Player player, SignListener.SignWrapper sign) {
+    protected void onCraftNotFound(Entity player, SignListener.SignWrapper sign) {
     }
 
     public boolean processSignChange(SignChangeEvent event, SignListener.SignWrapper sign) {

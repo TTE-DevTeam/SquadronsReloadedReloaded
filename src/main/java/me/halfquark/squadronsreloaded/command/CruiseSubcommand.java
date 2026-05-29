@@ -22,7 +22,7 @@ public class CruiseSubcommand {
             return;
 		}
 		
-		Squadron sq = SquadronManager.getInstance().getPlayerSquadron(player, true);
+		Squadron sq = SquadronManager.getInstance().getEntitySquadron(player, true);
 		if(sq == null) {
 			sender.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Squadron Found"));
             return;

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.annotation.Nullable;
 
 import me.halfquark.squadronsreloaded.SquadronsReloaded;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import net.countercraft.movecraft.craft.PlayerCraft;
 
@@ -29,8 +29,8 @@ public class SquadronManager {
 	
 	public static SquadronManager getInstance() {return inst;}
 	
-	public void putSquadron(Player p, Squadron s) {squads.put(p.getUniqueId(), s);}
-	public void removeSquadron(Player p) {
+	public void putSquadron(Entity p, Squadron s) {squads.put(p.getUniqueId(), s);}
+	public void removeSquadron(Entity p) {
 		Squadron sq = squads.remove(p.getUniqueId());
 		if (sq != null && sq.getCarrier() != null) {
 			sq.getCarrier().getDataTag(SquadronsReloaded.CARRIER_SQUADRONS).remove(sq);
@@ -42,10 +42,10 @@ public class SquadronManager {
 		}
 		squads.entrySet().removeIf(entry -> entry.getValue().equals(sq));
 	}
-	public boolean hasSquadron(Player p) {
-		if(!squads.containsKey(p.getUniqueId()))
+	public boolean hasSquadron(Entity entity) {
+		if(!squads.containsKey(entity.getUniqueId()))
 			return false;
-		Squadron sq = squads.get(p.getUniqueId());
+		Squadron sq = squads.get(entity.getUniqueId());
 		if(sq == null) {
 			return false;
 		}
@@ -62,11 +62,11 @@ public class SquadronManager {
 		return true;
 	}
 	@Nullable
-	public Squadron getPlayerSquadron(Player p, boolean check) {
+	public Squadron getEntitySquadron(Entity entity, boolean check) {
 		if(!check)
-			return squads.get(p.getUniqueId());
-		if(hasSquadron(p))
-			return squads.get(p.getUniqueId());
+			return squads.get(entity.getUniqueId());
+		if(hasSquadron(entity))
+			return squads.get(entity.getUniqueId());
 		return null;
 	}
 	

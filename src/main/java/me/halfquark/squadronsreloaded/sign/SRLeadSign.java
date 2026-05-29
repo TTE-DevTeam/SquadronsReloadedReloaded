@@ -11,6 +11,7 @@ import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
@@ -27,17 +28,17 @@ public class SRLeadSign extends AbstractMovecraftSign implements ISquadronSign {
     }
 
     @Override
-    protected boolean isSignValid(Action action, SignListener.SignWrapper signWrapper, Player player) {
+    protected boolean isSignValid(Action action, SignListener.SignWrapper signWrapper, Entity player) {
         return true;
     }
 
     @Override
-    protected boolean internalProcessSign(Action action, SignListener.SignWrapper signWrapper, Player player, @Nullable Craft craft) {
+    protected boolean internalProcessSign(Action action, SignListener.SignWrapper signWrapper, Entity player, @Nullable Craft craft) {
         Squadron sq;
         if (craft instanceof SquadronCraft sc) {
              sq = sc.getSquadron();
         } else {
-            sq = SquadronManager.getInstance().getPlayerSquadron(player, true);
+            sq = SquadronManager.getInstance().getEntitySquadron(player, true);
         }
         if(sq == null) {
             player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Squadron Found"));

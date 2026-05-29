@@ -14,7 +14,7 @@ import net.countercraft.movecraft.events.CraftReleaseEvent.Reason;
 import net.countercraft.movecraft.events.TypesReloadedEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.sign.MovecraftSignRegistry;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,7 +27,7 @@ public class CraftDetectListener implements Listener {
 		if(!(event.getCraft() instanceof SquadronCraft))
 			return;
 		SquadronCraft c = (SquadronCraft) event.getCraft();
-		Player player = c.getSquadronPilot();
+        Entity player = c.getSquadronPilot();
 		Squadron squadron = c.getSquadron();
 		if(c.getHitBox().size() == 0) {
     		CraftManager.getInstance().release(c, Reason.EMPTY, true);

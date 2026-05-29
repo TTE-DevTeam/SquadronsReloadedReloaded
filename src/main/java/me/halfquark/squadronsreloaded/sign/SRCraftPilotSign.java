@@ -19,6 +19,7 @@ import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Pair;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
     }
 
     @Override
-    protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Player player, @Nullable Craft craft) {
+    protected boolean internalProcessSign(Action clickType, SignListener.SignWrapper sign, Entity player, @Nullable Craft craft) {
         if (clickType.isRightClick()) {
             if (!player.isSneaking() && (craft instanceof SquadronCraft squadronCraft)) {
                 if (this.craftType.get(PropertyKeys.CRUISE_ON_PILOT)) {
@@ -90,7 +91,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
                 }
             }
 
-            Squadron squadron = SquadronManager.getInstance().getPlayerSquadron(player, false);
+            Squadron squadron = SquadronManager.getInstance().getEntitySquadron(player, false);
             if(squadron == null) {
                 squadron = new Squadron(player);
                 if (playerCraft != null) {
@@ -117,7 +118,7 @@ public class SRCraftPilotSign extends CraftPilotSign implements ISquadronSign {
         }
     }
 
-    protected void runDetectTaskWithPlayerCraft(final Squadron squadron, final MovecraftLocation startPoint, final Player player, final World world) {
+    protected void runDetectTaskWithPlayerCraft(final Squadron squadron, final MovecraftLocation startPoint, final Entity player, final World world) {
         CraftManager.getInstance().detect(
                 startPoint,
                 this.craftType, (t, w, p, parents) -> {

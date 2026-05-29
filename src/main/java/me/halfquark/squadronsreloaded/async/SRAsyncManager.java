@@ -47,9 +47,9 @@ public class SRAsyncManager extends BukkitRunnable {
             if (sq.getPilotLocked()) {
                 if (sq.getPilot().isSneaking())
                     dive = true;
-                if (sq.getPilot().getInventory().getHeldItemSlot() == 3)
+                if (sq.getPilotPlayer() != null && sq.getPilotPlayer().getInventory().getHeldItemSlot() == 3)
                     bankLeft = true;
-                if (sq.getPilot().getInventory().getHeldItemSlot() == 5)
+                if (sq.getPilotPlayer() != null && sq.getPilotPlayer().getInventory().getHeldItemSlot() == 5)
                     bankRight = true;
             }
 	        for (SquadronCraft pcraft : sq.getCrafts()) {

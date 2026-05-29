@@ -5,7 +5,7 @@ import me.halfquark.squadronsreloaded.move.CraftTranslateManager;
 import me.halfquark.squadronsreloaded.squadron.Squadron;
 import me.halfquark.squadronsreloaded.squadron.SquadronCraft;
 import me.halfquark.squadronsreloaded.squadron.SquadronManager;
-import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.PropertyKeys;
 import net.countercraft.movecraft.listener.InteractListener;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.MathUtils;
@@ -17,13 +17,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Set;
-import java.util.UUID;
 
 public class PlayerInteractListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteractStick(PlayerInteractEvent event) {
-		Squadron sq = SquadronManager.getInstance().getPlayerSquadron(event.getPlayer(), true);
+		Squadron sq = SquadronManager.getInstance().getEntitySquadron(event.getPlayer(), true);
 		if(sq == null)
 			return;
 		if (event.getItem() == null || event.getItem().getType() != SquadronsReloaded.SQUADRONPILOTTOOL)
@@ -60,7 +59,7 @@ public class PlayerInteractListener implements Listener {
 			    if(CraftTranslateManager.getInstance().isInCooldown(craft))
 			    	continue;
 			
-			    if (!event.getPlayer().hasPermission("movecraft." + craft.getType().getStringProperty(CraftType.NAME) + ".move")) {
+			    if (!event.getPlayer().hasPermission("movecraft." + craft.getCraftProperties().getName() + ".move")) {
 			        event.getPlayer().sendMessage(
 			                I18nSupport.getInternationalisedString("Insufficient Permissions"));
 			        continue;
@@ -74,7 +73,7 @@ public class PlayerInteractListener implements Listener {
 			        dy = 1;
 			        if (event.getPlayer().isSneaking())
 			        	dy = -1;
-			        if (craft.getType().getBoolProperty(CraftType.GEAR_SHIFTS_AFFECT_DIRECT_MOVEMENT))
+			        if (craft.getCraftProperties().get(PropertyKeys.GEAR_SHIFT_AFFECT_DIRECT_MOVEMENT))
 			            dy *= craft.getCurrentGear();
 			    } else {
 				    // Player is onboard craft and right clicking

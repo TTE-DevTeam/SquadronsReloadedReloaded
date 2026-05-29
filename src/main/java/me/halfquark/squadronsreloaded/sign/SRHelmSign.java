@@ -9,6 +9,7 @@ import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.sign.HelmSign;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.MathUtils;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +17,12 @@ import org.jetbrains.annotations.Nullable;
 public class SRHelmSign extends HelmSign implements ISquadronSign {
 
 	@Override
-	protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+	protected boolean canPlayerUseSignOn(Entity player, @Nullable Craft craft) {
 		return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
 	}
 
 	@Override
-	protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Player player) {
+	protected boolean internalProcessSignWithCraft(Action clickType, SignListener.SignWrapper sign, Craft craft, Entity player) {
 		if (craft instanceof SquadronCraft sc && sc.getSquadron() != null) {
 			MovecraftRotation rotation = MovecraftRotation.fromAction(clickType);
 

@@ -10,7 +10,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.sign.AbstractMovecraftSign;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.ChatUtils;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class SRFormationSign extends AbstractMovecraftSign {
 
     @Override
-    public boolean processSignClick(Action clickType, SignListener.SignWrapper sign, Player player) {
+    public boolean processSignClick(Action clickType, SignListener.SignWrapper sign, Entity player) {
         this.formation = null;
         return super.processSignClick(clickType, sign, player);
     }
@@ -28,7 +28,7 @@ public class SRFormationSign extends AbstractMovecraftSign {
     private int spacing;
 
     @Override
-    protected boolean isSignValid(Action action, SignListener.SignWrapper signWrapper, Player player) {
+    protected boolean isSignValid(Action action, SignListener.SignWrapper signWrapper, Entity player) {
         this.formation = FormationManager.getInstance().getFormation(signWrapper.getRaw(1));
         if(this.formation == null) {
             player.sendMessage(ChatUtils.errorPrefix().append(I18nSupport.getInternationalisedComponent("Squadrons - Specify a valid formation")));
@@ -49,12 +49,12 @@ public class SRFormationSign extends AbstractMovecraftSign {
     }
 
     @Override
-    protected boolean internalProcessSign(Action action, SignListener.SignWrapper signWrapper, Player player, @Nullable Craft craft) {
+    protected boolean internalProcessSign(Action action, SignListener.SignWrapper signWrapper, Entity player, @Nullable Craft craft) {
         Squadron squadron;
         if (craft != null && craft instanceof SquadronCraft sc) {
             squadron = sc.getSquadron();
         } else {
-            squadron = SquadronManager.getInstance().getPlayerSquadron(player, true);
+            squadron = SquadronManager.getInstance().getEntitySquadron(player, true);
         }
         if(squadron == null) {
             player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Squadron Found"));

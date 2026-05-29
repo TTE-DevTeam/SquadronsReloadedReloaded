@@ -14,7 +14,7 @@ import net.countercraft.movecraft.util.MathUtils;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,7 +40,7 @@ public class CraftSinkListener implements Listener {
 		if(!(e.getCraft() instanceof SquadronCraft))
 			return;
 		SquadronCraft craft = (SquadronCraft) e.getCraft();
-		Player p = craft.getSquadronPilot();
+        Entity p = craft.getSquadronPilot();
 		Squadron sq = craft.getSquadron();
 
 		craft.setAudience(Audience.empty());

@@ -27,7 +27,7 @@ public class CarrierSubcommand {
 			player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Insufficient Permissions"));
             return;
 		}
-		Squadron sq = SquadronManager.getInstance().getPlayerSquadron(player, true);
+		Squadron sq = SquadronManager.getInstance().getEntitySquadron(player, true);
 		if(sq == null){
 			player.sendMessage(ChatUtils.MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Squadrons - No Squadron Found"));
             return;

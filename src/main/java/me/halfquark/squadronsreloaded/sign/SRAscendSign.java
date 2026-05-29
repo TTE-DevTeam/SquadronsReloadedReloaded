@@ -6,7 +6,7 @@ import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.sign.AscendSign;
 import net.countercraft.movecraft.sign.SignListener;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -17,12 +17,12 @@ public class SRAscendSign extends AscendSign implements ISquadronSign {
     }
 
     @Override
-    protected boolean canPlayerUseSignOn(Player player, @Nullable Craft craft) {
+    protected boolean canPlayerUseSignOn(Entity player, @Nullable Craft craft) {
         return this.sq_canPlayerUseSignOn(player, craft, super::canPlayerUseSignOn);
     }
 
     @Override
-    protected void setCraftCruising(Player player, CruiseDirection direction, Craft craft) {
+    protected void setCraftCruising(Entity player, CruiseDirection direction, Craft craft) {
         if (craft instanceof SquadronCraft sc && !player.isSneaking()) {
             Squadron squadron = sc.getSquadron();
             squadron.setCruiseDirection(direction);
@@ -38,7 +38,7 @@ public class SRAscendSign extends AscendSign implements ISquadronSign {
     }
 
     @Override
-    protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Player player) {
+    protected void onAfterStoppingCruise(Craft craft, SignListener.SignWrapper signWrapper, Entity player) {
         super.onAfterStoppingCruise(craft, signWrapper, player);
 
         if (craft instanceof SquadronCraft sc && !player.isSneaking()) {

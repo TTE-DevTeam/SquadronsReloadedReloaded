@@ -10,7 +10,7 @@ import net.countercraft.movecraft.sign.SignListener;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,12 +86,12 @@ public interface ISquadronSign {
         return result;
     }
 
-    public default boolean sq_canPlayerUseSignOn(Player player, @Nullable Craft craft, BiFunction<Player, @Nullable Craft, Boolean> superFunction) {
-        if (!superFunction.apply(player, craft)) {
+    public default boolean sq_canPlayerUseSignOn(Entity interactor, @Nullable Craft craft, BiFunction<Entity, @Nullable Craft, Boolean> superFunction) {
+        if (!superFunction.apply(interactor, craft)) {
             return false;
         }
         if (craft instanceof SquadronCraft sc) {
-            return sc.getSquadron().getPilot() == player;
+            return sc.getSquadron().getPilot() == interactor;
         }
         return true;
     }

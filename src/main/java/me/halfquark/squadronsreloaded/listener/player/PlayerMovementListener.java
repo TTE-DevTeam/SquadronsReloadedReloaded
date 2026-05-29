@@ -51,7 +51,7 @@ public class PlayerMovementListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		
-		Squadron sq = SquadronManager.getInstance().getPlayerSquadron(event.getPlayer(), true);
+		Squadron sq = SquadronManager.getInstance().getEntitySquadron(event.getPlayer(), true);
 		if(sq == null)
 			return;
 		if(sq.getCarrier() == null) {
